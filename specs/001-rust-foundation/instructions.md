@@ -75,3 +75,67 @@ Specification 应关注：
 
 ----------------------------------------
 执行 /speckit.clarify 消除歧义
+
+
+----------------------------------------------------------------------
+执行 /speckit.plan 生成计划
+
+以下是约束建议：
+
+为 Rust Foundation 学习 Feature 制定实现计划。
+
+Technical Context：
+
+Language:
+Rust
+
+Edition:
+使用当前稳定 Rust edition，以实际项目环境为准。
+
+Target Platform:
+Linux x86_64
+
+Project Type:
+Learning project + executable experiments
+
+Testing:
+cargo test
+
+Additional validation:
+rustc
+cargo clippy
+cargo fmt
+MIR / LLVM IR（对于需要理解编译器行为的实验）
+
+Performance:
+本 Feature 不追求最终网络性能，但需要建立后续 systems programming 所需的性能分析基础。
+
+Documentation:
+Markdown + Rust source code + experiment results + Feynman tutorials
+
+Project structure should separate：
+
+* learning material
+* executable experiments
+* Feynman tutorials
+* acceptance tests
+
+重点设计：
+
+1. Rust ownership / borrowing 实验；
+2. lifetime 实验；
+3. Send / Sync 实验；
+4. unsafe Rust 实验；
+5. raw pointer 实验；
+6. alignment / aliasing 实验；
+7. FFI 实验；
+8. no_std 实验；
+9. core / alloc / std 实验；
+10. atomic / concurrency 实验。
+
+每一个核心知识模块都应该能够被独立验证。
+
+不要为了学习 Rust 而构建没有价值的大型应用。
+
+实验应该尽可能小、独立、可运行、可观察。
+
