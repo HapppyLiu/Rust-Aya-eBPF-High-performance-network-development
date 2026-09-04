@@ -1,0 +1,23 @@
+[workspace]
+resolver = "3"
+members = ["harness", "experiments/m*"]
+
+# m7-nostd 用 `#![no_main]` + 自定义 `#[panic_handler]`，无法用 host target 构建，
+# 会污染 `cargo test --workspace` 的一键验证（research.md R-03）。
+# 它的验收命令是 `cd experiments/m7-nostd && cargo build`（spec.md SC-002 判定口径第 2 项）。
+exclude = ["experiments/m7-nostd"]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false
+
+[workspace.dependencies]
+rf-harness = { path = "harness" }
+
+# Constitution VI / FR-008 的机械兜底（experiment-contract §C6.4）。
+# 人工审查负责判断 SAFETY 注释是否**实质**覆盖 §C6.2 的五要素；
+# 这两条 lint 只保证"没有裸奔的 unsafe 块"与"一个块里不混多个 unsafe 操作"。
+[workspace.lints.clippy]
+undocumented_unsafe_blocks = "deny"
+multiple_unsafe_ops_per_block = "deny"

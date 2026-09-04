@@ -1,0 +1,13 @@
+# 本 Feature 唯一的构建与验收工具链（research.md R-01 / FR-020）。
+#
+# 分析工具链（Miri / sanitizer / MIR dump）另用 pinned nightly 1.100.0，
+# 通过 `cargo +nightly` 显式调用，MUST NOT 用于产出任何稳定断言。
+#
+# ⚠️ 本 Feature 进行期间 MUST NOT 执行 `rustup update`（FR-020）。
+#    若因不可避免的原因升级，受影响实验的验收记录 MUST 重新验证后方可沿用。
+
+[toolchain]
+channel = "1.98.0"
+components = ["rustfmt", "clippy", "rust-src"]
+targets = ["x86_64-unknown-linux-gnu", "x86_64-unknown-none"]
+profile = "minimal"

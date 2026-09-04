@@ -1,0 +1,16 @@
+[package]
+name = "m1-ownership"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "US1 / C-01..C-04：所有权、移动、借用、生命周期"
+
+[dependencies]
+
+# harness 只在验收侧使用：examples/ 负责观察（不依赖 harness），
+# tests/ 负责断言（用 harness 做错误码断言）。
+[dev-dependencies]
+rf-harness.workspace = true
+
+[lints]
+workspace = true

@@ -111,7 +111,7 @@ Constitution Plan gate 的逐项落实。**Exp** 列为该能力的主实验（`
 | C-16 | Raw pointer | m5 | `c16_raw_ptr` | `core/src/ptr/mod.rs`、`core/src/ptr/const_ptr.rs` (`read`/`write`) | **适用** | – | **Miri** |
 | C-17 | Pointer arithmetic | m5 | `c17_ptr_arith` | `core/src/ptr/const_ptr.rs` (`add`/`offset`/`wrapping_add`) | **适用** | – | **Miri** |
 | C-18 | Alignment | m5 | `c18_alignment` | `core/src/mem/mod.rs` (`align_of`)、`core/src/ptr/mod.rs` (`read_unaligned`) | **适用** | – | **Miri** |
-| C-19 | Aliasing | m5 | `c19_aliasing` | `core/src/cell.rs` (`UnsafeCell`) | **适用** | – | **Miri** (Stacked + Tree Borrows 对照) |
+| C-19 | Aliasing | m5 | `c19_aliasing` | `core/src/cell.rs` (`UnsafeCell`) | **适用** | – | **Miri** (Stacked + Tree Borrows 对照，冲突判定见下) |
 | C-20 | Memory safety | m5 | `c20_mem_safety` | `core/src/slice/raw.rs` (`from_raw_parts`)、`alloc/src/vec/mod.rs` (`set_len`) | **适用** | – | **Miri** |
 | C-21 | FFI | m6 | `c21_ffi` | `core/src/ffi/mod.rs` (`c_int`/`c_char`)、`std/src/ffi/c_str.rs` (`CStr`) | **适用** | – | **ASan**（Miri 不支持真实 C 调用，R-02） |
 | C-22 | no_std | m7 | `c22_nostd` | `core/src/lib.rs` (`#![no_std]`)、`std/src/lib.rs` | 适用 | **适用** | 编译期 + `nm`/`readelf` |
@@ -119,6 +119,39 @@ Constitution Plan gate 的逐项落实。**Exp** 列为该能力的主实验（`
 | C-24 | Panic & allocator | m7 | `c24_panic_alloc` | `core/src/panicking.rs`、`core/src/alloc/global.rs` (`GlobalAlloc`)、`alloc/src/alloc.rs` | **适用** | **适用** | 编译期 + Miri（host 侧 allocator） |
 
 源码根路径：`$(rustc --print sysroot)/lib/rustlib/src/rust/library/`（`rust-src` 组件已安装）。
+
+#### C-19 补充：两个别名模型结论不一致时的判定规则（T004-c）
+
+C-19 是本 Feature 中**唯一**要求跑两轮 Miri 的能力：默认 **Stacked Borrows** 与
+`MIRIFLAGS="-Zmiri-tree-borrows"` 的 **Tree Borrows**。二者是 Rust 别名模型的两个**候选
+方案**，均**未被正式确定为**语言规范，因此它们给出不同结论是**正常且有教学价值的现象**，
+不是工具故障，MUST NOT 通过"换一个模型再跑一次"来挑选合意结果。
+
+**判定规则**（四种组合，穷尽）：
+
+| # | Stacked Borrows | Tree Borrows | `ub_verdict` | 判定 |
+|---|----------------|--------------|-------------|------|
+| 1 | 报告 UB | 报告 UB | `expected-ub` | **pass**（若实验意图为 UB 对照）。两模型一致，结论稳健 |
+| 2 | 无报告 | 无报告 | `clean` | **pass**（若实验意图为安全侧）。两模型一致 |
+| 3 | 报告 UB | 无报告 | `expected-ub`（**以 SB 为准**） | **pass，但 MUST 记为"模型敏感"** |
+| 4 | 无报告 | 报告 UB | `expected-ub`（**以 TB 为准**） | **pass，但 MUST 记为"模型敏感"** |
+
+**规则 1（取严）**：情形 3、4 中，`ub_verdict` 取**两轮中更严格的一方**，即只要任一模型
+报告 UB，该实验即记为 `expected-ub`。理由：两个模型都是对"什么是合法别名"的**保守近似**，
+被任一方拒绝的代码都不应被写进安全抽象 —— 未来无论哪个模型被采纳，该代码都有风险。
+
+**规则 2（MUST 记录，不得抹平）**：情形 3、4 MUST 在
+`experiments/m5-unsafe/OBSERVATIONS.md` 中建立一个 `[MODEL-SENSITIVE]` 记录块，
+逐条写明：哪个模型报告、报告的类别子串（按 experiment-contract §C5.3 白名单）、
+另一模型为何未报告（对应两模型在**保留借用**或**两阶段借用**处理上的哪一处差异）。
+
+**规则 3（稳定断言的写法）**：情形 3、4 的 `#[test]` MUST NOT 断言"两轮结果相同"，
+而 MUST 分别对两轮各写一条断言，并在 `CLAIM` 中注明该断言绑定的模型。
+断言"两模型一致"会把一个**已知的语言未决问题**错误地固化成回归测试。
+
+**规则 4（对 Feynman 的要求）**：出现情形 3 或 4 时，`feynman/m5-unsafe.md` 第 3 节
+MUST 解释该差异的来源，且第 5 节 MUST 有一个验证性问题指向它。
+仅记录"两个模型结果不同"而不解释来源，按 Spec Edge Case"仅记录现象者视为未完成"判 fail。
 
 ### Post-Design Re-check（Phase 1 完成后）
 
@@ -198,11 +231,20 @@ experiments/                            # 可执行实验：一模块一 crate
 │   └── src/main.rs                     # #![no_std] #![no_main] + panic_handler
 └── m8-capstone/                        # 综合实验    (US8, P3) —— #![no_std] + alloc 风格
 
-learning/                               # 学习材料（概念 + 源码引用）
+learner/                                # ★ Learner Track（学习者视图，不含答案）
+├── README.md                           # 双轨读法与"打开答案"的条件
+├── _templates/{guide.md,predictions.md,selfcheck.md}
+├── m1-ownership/
+│   ├── guide.md                        # 学习框架：引导问题 / 自己定位源码 / 提示阶梯
+│   ├── predictions.md                  # 先预测后验证（预测列 MUST 先提交）
+│   └── selfcheck.md                    # Feynman 五项的提问版
+└── ... m2 .. m8
+
+learning/                               # ▼ Answer Track：学习材料（概念 + 源码引用）
 ├── m1-ownership/{concept.md,source-refs.md}
 └── ... m2 .. m8
 
-feynman/                                # Feynman 教学材料：按模块 8 份，强制五项检验
+feynman/                                # ▼ Answer Track：Feynman 教学材料，8 份，强制五项检验
 ├── m1-ownership.md
 └── ... m2 .. m8
 
@@ -220,9 +262,22 @@ tools/
 └── run-asan.sh                         # US6 的 FFI UB 判定入口
 ```
 
-**Structure Decision**：采用**四分目录 + 单 workspace**（R-09）。
+**Structure Decision**：采用**四分目录 + 单 workspace**（R-09），
+并在其上叠加 **Learner Track**（`learner/`）构成**双轨产物**。
 `learning/`（概念与源码引用）、`experiments/`（可执行实验）、`feynman/`（教学材料）、
 `acceptance/`（验收标准与判定题）四个顶层目录一一对应用户要求的四类产物，物理分离避免混杂。
+
+**双轨结构（Dual-Track）**：`learner/` 是**学习者视图**，只放学习框架与问题；
+`learning/` + `feynman/` + `experiments/` 的源码是**答案视图**。
+两轨在 `acceptance/` 汇合 —— 验收标准对两轨中立，既不属于问题也不属于答案。
+契约见 [contracts/learning-artifact-contract.md](./contracts/learning-artifact-contract.md) §H，
+其中 §H3 规定了 `learner/` 下 MUST NOT 出现的六类答案内容（错误码、具体数值、UB 类别文本、
+源码行号、机制性结论、Answer Track 原文）。
+
+采用**目录级隔离**而非同文件折叠块，理由与 R-05"稳定断言 vs 非断言输出用物理隔离而非约定"
+一致：折叠块只需一次误展开就永久失效，而目录隔离使"读到答案"成为一个需要显式决定的动作。
+本项目为单人工程，两轨由同一人产出，因此"不泄漏"由**提交顺序纪律**保证（§H3.4）——
+与 §F1 的题集冻结、§D2a 的清单冻结取同一机制。
 
 实验 crate 粒度取 **8**（对齐 8 个 Feynman 模块与模块级验收），实验文件粒度取 **24**
 （对齐能力级 Acceptance Criteria），精确落实 Clarification"Feynman 按 8 个模块产出、24 项能力

@@ -1,0 +1,7 @@
+# 与 rust-toolchain.toml 保持一致，使 clippy 不会因 MSRV 推断而放宽检查。
+msrv = "1.98.0"
+
+# `undocumented_unsafe_blocks` 只认 `// SAFETY:` 前缀（默认值，此处显式写出以免被误改）。
+# 注释内容是否**实质**覆盖 experiment-contract §C6.2 的五要素，由人工审查判定。
+accept-comment-above-statement = true
+accept-comment-above-attributes = true

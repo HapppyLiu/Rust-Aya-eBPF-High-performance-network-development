@@ -1,0 +1,5 @@
+# 最小配置：只固定会影响 diff 稳定性的项，不引入风格偏好。
+# `cargo fmt --check` 是日常门禁之一（quickstart §1）。
+edition = "2024"
+max_width = 100
+newline_style = "Unix"

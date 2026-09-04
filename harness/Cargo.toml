@@ -1,0 +1,13 @@
+[package]
+name = "rf-harness"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "Rust Foundation 学习工程的共享验证设施。零外部依赖。"
+
+# 零外部依赖是硬性约束（R-08 / harness-api.md）：
+# 每引入一个依赖，都会把学习者的注意力从语言机制转移到库 API 上。
+[dependencies]
+
+[lints]
+workspace = true

@@ -85,14 +85,21 @@ pub struct AllocStats {
 
 /// 测量闭包执行期间的分配活动，返回闭包结果与统计。
 ///
-/// # 并发约束
-/// 计数器是进程全局的。使用本函数的测试 MUST 串行执行
-/// （置于同一 `#[test]` 内，或用 crate 内互斥量串行化），否则统计不再确定。
+/// # 统计范围：仅调用线程
+/// 计数器**按线程隔离**（thread-local），因此结果不受 `cargo test` 并行度影响。
+/// 代价是两条边界：闭包内新起线程的分配不计入；
+/// 闭包若释放其他线程分配的内存，`deallocs` 会计入而 `allocs` 不会。
 pub fn measure<R>(f: impl FnOnce() -> R) -> (R, AllocStats);
 ```
 
 **契约保证**：
 - `AllocStats` 的每个字段都是确定性的 → 可直接写进 `#[test]` 断言。
+- 该确定性**依赖**计数器按线程隔离。曾用进程全局原子计数器实现，
+  结果 `cargo test --workspace` 下自检测试约每 5 次失败 1 次
+  （并行跑的其他测试污染统计）。"进程全局计数器 + 确定性断言"是自相矛盾的组合，
+  而确定性是本模块存在的理由，故按线程隔离。
+  回归防护：`harness/tests/harness_selfcheck.rs::measure_is_immune_to_other_threads`
+  用一个持续分配的背景线程 + 强制重叠窗口把该场景固定为**稳定**失败而非偶发抖动。
 - `bytes_allocated` 与 `peak_bytes` 反映**请求的**字节数，不含分配器内部开销，
   避免把 libc 实现细节引入断言。
 - 使用 `CountingAllocator` 的 crate MUST 在 `OBSERVATIONS.md` 中说明它对该 crate 全局生效。

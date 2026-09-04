@@ -29,6 +29,26 @@ description: "Task list for Rust Foundation (001-rust-foundation)"
 `acceptance/`（验收标准），加上 `harness/`（rf-harness 验证设施）与 `tools/`（脚本）。
 `experiments/m7-nostd` 被根 workspace `exclude`（R-03）。
 
+外加 **`learner/`（Learner Track 学习者视图）**，见下方 §双轨产物。
+
+## 🔀 双轨产物（Dual-Track Learning Artifact）
+
+每个产出学习内容的 Task 同时产出**两个视图**（契约：learning-artifact-contract §H）：
+
+| 轨道 | 目录 | 内容 | 何时读 |
+|-----|------|------|-------|
+| **Learner Track** | `learner/mN-*/` | 学习框架、引导问题、预测表、自检清单、提示阶梯 | **先读**，用于自测 |
+| **Answer Track** | `learning/mN-*/`、`feynman/mN-*.md`、`experiments/mN-*/` 源码 | 完整答案：原理、源码、实验 | **卡住后**再读 |
+| **汇合点** | `acceptance/criteria/cNN.md` | 两轨共用的客观验收 | 任何时候 |
+
+**关键约束**：`learner/` 下 MUST NOT 出现错误码、具体数值答案、Miri UB 类别文本、源码行号、
+机制性结论、Answer Track 原文（§H3.1 的 L1–L6 六类）。
+本项目为单人工程，"不泄漏"由**提交顺序纪律**保证：Learner Track 三件套 MUST 在对应模块的
+实验与 concept 材料投入使用**之前**先行提交（§H3.4）。
+
+双轨任务为 **T151–T161**，见下方 §双轨产物任务。基础设施类 Task（工具链、harness、脚本）
+不产出学习内容，不适用双轨。
+
 ## ⚠️ 学习顺序即执行顺序（与常规 Feature 的关键差异）
 
 spec.md 明确："Story 按**学习顺序**编号（Constitution XI 要求递进），优先级 tier 表示**阻塞性**
@@ -49,21 +69,21 @@ workspace 与脚本骨架。
 
 ### 1A. 门禁未决项裁定（阻塞后续所有验收判定）
 
-- [ ] T001 [P] 修订 `specs/001-rust-foundation/contracts/experiment-contract.md`：补齐 UB 判定的可判定规则——(a) §C5 增加"Miri 报告 UB 但**类别与事前预测不一致**"时判 fail 并重写预测的规则（CHK027）；(b) §C5.3 给出**允许的错误类别子串白名单**（如 `Undefined Behavior` / `memory access failed` / `attempting a read access` / `not sufficiently aligned` / `alias`），禁止事后任选子串（CHK026）；(c) §C3.2"解释"字段增加内容下限（MUST 回答"为什么会这样"与"这**不能**证明什么"两问，仅复述现象即未完成，CHK017）；(d) §C7.2 明确"可推广性判定"对**全部**实验强制，敏感性由实验作者在 OBSERVATIONS 中给出判定与理由（CHK019）；(e) §C4 增加"同一样本触发多个错误码"时的断言方式（断言集合为子集关系，MUST 列出全部实际错误码）（CHK020）
-- [ ] T002 [P] 修订 `specs/001-rust-foundation/contracts/learning-artifact-contract.md`：(a) §C1 明确"模块 Feynman fail → 能力级 AC **可先判 pass**，但 Capability 状态被模块门禁挡在 `experiment-passed`，MUST NOT 进入 `accepted`"（CHK050）；(b) §D2 为不产生可执行产物的目标（§G 限时阅读、§F 推导依据）给出等效客观判据（复核清单逐条勾选 + 复核人签名日期，CHK003）；(c) §C 检验结果表为五项各写一行可判定合格标准，第 5 节明确"≥5 个问题且每题指向一条实验断言或源码引用"（CHK048）；(d) §F5 与 spec SC-007 的通过线统一表述并声明冲突时以哪条为准（CHK034）；(e) §E 表头增加 **Task** 列（值为本文件的 T-ID），使 FR-013 七段链条不缺环（CHK051）；(f) §E3 给出孤立笔记的**可执行枚举方式**（`learning/`+`feynman/` 下全部条目与矩阵 C-ID 比对的具体命令，CHK052/CHK053）
-- [ ] T003 修订 `specs/001-rust-foundation/spec.md`：(a) US7 Independent Test 与 SC-006 明确 `no_std` 的"可运行"= **构建成功**（`x86_64-unknown-none` 无 OS，产物不可直接执行，CHK036）；(b) SC-006 的错误集合定义为**固定可枚举清单**（三步递进各自的错误逐条列出，避免编译器只报首错导致分母不确定，CHK038）；(c) SC-002 判定口径补上"`cargo test --workspace` 全绿 **+** `experiments/m7-nostd` 构建成功 + m7 的编译期/静态检查断言复现"（CHK040/CHK041）；(d) FR-011 与 FR-012 的关系明确化：US2/US3/US4/US6 未通过时能否启动 Feature 002 给出唯一答案（CHK058）
-- [ ] T004 修订 `specs/001-rust-foundation/spec.md` 与 `plan.md`：(a) 为 US5 AS4"与 eBPF verifier 边界要求建立对应关系"给出在 FR-017 约束下**可产出可验收**的形式（限定为 `learning/m5-unsafe/concept.md` 的"与后续学习的关联"条目 + 边界检查移除对照实验的解释，MUST NOT 编写 eBPF 程序，CHK031）；(b) 将"ASan 覆盖面窄于 Miri，`ASan 无报告` 不等价于 `无 UB`"显式登记为 Assumption，并说明 C-21 的判定强度弱于 US5（CHK045）；(c) 在 plan.md Capability Gate Matrix 的 C-19 行补充"Stacked Borrows 与 Tree Borrows 结论不一致时的判定规则"（CHK030）
+- [X] T001 [P] 修订 `specs/001-rust-foundation/contracts/experiment-contract.md`：补齐 UB 判定的可判定规则——(a) §C5 增加"Miri 报告 UB 但**类别与事前预测不一致**"时判 fail 并重写预测的规则（CHK027）；(b) §C5.3 给出**允许的错误类别子串白名单**（如 `Undefined Behavior` / `memory access failed` / `attempting a read access` / `not sufficiently aligned` / `alias`），禁止事后任选子串（CHK026）；(c) §C3.2"解释"字段增加内容下限（MUST 回答"为什么会这样"与"这**不能**证明什么"两问，仅复述现象即未完成，CHK017）；(d) §C7.2 明确"可推广性判定"对**全部**实验强制，敏感性由实验作者在 OBSERVATIONS 中给出判定与理由（CHK019）；(e) §C4 增加"同一样本触发多个错误码"时的断言方式（断言集合为子集关系，MUST 列出全部实际错误码）（CHK020）
+- [X] T002 [P] 修订 `specs/001-rust-foundation/contracts/learning-artifact-contract.md`：(a) §C1 明确"模块 Feynman fail → 能力级 AC **可先判 pass**，但 Capability 状态被模块门禁挡在 `experiment-passed`，MUST NOT 进入 `accepted`"（CHK050）；(b) §D2 为不产生可执行产物的目标（§G 限时阅读、§F 推导依据）给出等效客观判据（复核清单逐条勾选 + 复核人签名日期，CHK003）；(c) §C 检验结果表为五项各写一行可判定合格标准，第 5 节明确"≥5 个问题且每题指向一条实验断言或源码引用"（CHK048）；(d) §F5 与 spec SC-007 的通过线统一表述并声明冲突时以哪条为准（CHK034）；(e) §E 表头增加 **Task** 列（值为本文件的 T-ID），使 FR-013 七段链条不缺环（CHK051）；(f) §E3 给出孤立笔记的**可执行枚举方式**（`learning/`+`feynman/` 下全部条目与矩阵 C-ID 比对的具体命令，CHK052/CHK053）
+- [X] T003 修订 `specs/001-rust-foundation/spec.md`：(a) US7 Independent Test 与 SC-006 明确 `no_std` 的"可运行"= **构建成功**（`x86_64-unknown-none` 无 OS，产物不可直接执行，CHK036）；(b) SC-006 的错误集合定义为**固定可枚举清单**（三步递进各自的错误逐条列出，避免编译器只报首错导致分母不确定，CHK038）；(c) SC-002 判定口径补上"`cargo test --workspace` 全绿 **+** `experiments/m7-nostd` 构建成功 + m7 的编译期/静态检查断言复现"（CHK040/CHK041）；(d) FR-011 与 FR-012 的关系明确化：US2/US3/US4/US6 未通过时能否启动 Feature 002 给出唯一答案（CHK058）
+- [X] T004 修订 `specs/001-rust-foundation/spec.md` 与 `plan.md`：(a) 为 US5 AS4"与 eBPF verifier 边界要求建立对应关系"给出在 FR-017 约束下**可产出可验收**的形式（限定为 `learning/m5-unsafe/concept.md` 的"与后续学习的关联"条目 + 边界检查移除对照实验的解释，MUST NOT 编写 eBPF 程序，CHK031）；(b) 将"ASan 覆盖面窄于 Miri，`ASan 无报告` 不等价于 `无 UB`"显式登记为 Assumption，并说明 C-21 的判定强度弱于 US5（CHK045）；(c) 在 plan.md Capability Gate Matrix 的 C-19 行补充"Stacked Borrows 与 Tree Borrows 结论不一致时的判定规则"（CHK030）
 
 ### 1B. 工具链与工程骨架
 
-- [ ] T005 创建 `rust-toolchain.toml`：锁定 stable `1.98.0`，`components = ["rustfmt","clippy","rust-src"]`，`targets = ["x86_64-unknown-linux-gnu","x86_64-unknown-none"]`（R-01 / FR-020）
-- [ ] T006 创建根 `Cargo.toml`：`[workspace] members = ["harness","experiments/m*"]`、`exclude = ["experiments/m7-nostd"]`、`resolver`、`[workspace.package] edition = "2024"`、`[workspace.lints.clippy] undocumented_unsafe_blocks = "deny"` 与 `multiple_unsafe_ops_per_block = "deny"`（experiment-contract §C6.4）
-- [ ] T007 [P] 创建 `rustfmt.toml` 与 `clippy.toml`（宽度/msrv 等最小配置，保证 `cargo fmt --check` 与 `cargo clippy -- -D warnings` 可作为日常门禁，quickstart §1）
-- [ ] T008 [P] 创建四分目录骨架与 `.gitignore`：`learning/`、`experiments/`、`feynman/`、`acceptance/criteria/`、`tools/`、`harness/`，各目录放置说明其职责的 `README.md`（R-09）
-- [ ] T009 [P] 创建 `tools/env-record.sh`：输出 data-model §9 全部字段（`rustc_stable`/`rustc_nightly`/`edition`/`kernel`/`arch`/`target`/`command`），格式与 `rf_harness::env` 一致（FR-010）
-- [ ] T010 [P] 创建 `tools/emit-mir.sh` 与 `tools/emit-llvm-ir.sh`：封装 `cargo rustc -- --emit=mir|llvm-ir`，输出落到 `target/ir/`（R-04 阶梯 3–4）
-- [ ] T011 [P] 创建 `tools/run-miri.sh` 与 `tools/run-asan.sh`：统一 `MIRIFLAGS`（含 `-Zmiri-many-seeds`、`-Zmiri-tree-borrows` 开关）与 ASan 的 `-Zbuild-std` 参数（R-02 / quickstart §4 §5）
-- [ ] T012 执行 `quickstart.md` §0 的环境基线校验，并把 `tools/env-record.sh` 的输出存档为 `acceptance/environment-baseline.md`（后续所有 OBSERVATIONS 的环境块以此为基准，FR-010 / FR-018）
+- [X] T005 创建 `rust-toolchain.toml`：锁定 stable `1.98.0`，`components = ["rustfmt","clippy","rust-src"]`，`targets = ["x86_64-unknown-linux-gnu","x86_64-unknown-none"]`（R-01 / FR-020）
+- [X] T006 创建根 `Cargo.toml`：`[workspace] members = ["harness","experiments/m*"]`、`exclude = ["experiments/m7-nostd"]`、`resolver`、`[workspace.package] edition = "2024"`、`[workspace.lints.clippy] undocumented_unsafe_blocks = "deny"` 与 `multiple_unsafe_ops_per_block = "deny"`（experiment-contract §C6.4）
+- [X] T007 [P] 创建 `rustfmt.toml` 与 `clippy.toml`（宽度/msrv 等最小配置，保证 `cargo fmt --check` 与 `cargo clippy -- -D warnings` 可作为日常门禁，quickstart §1）
+- [X] T008 [P] 创建四分目录骨架与 `.gitignore`：`learning/`、`experiments/`、`feynman/`、`acceptance/criteria/`、`tools/`、`harness/`，各目录放置说明其职责的 `README.md`（R-09）
+- [X] T009 [P] 创建 `tools/env-record.sh`：输出 data-model §9 全部字段（`rustc_stable`/`rustc_nightly`/`edition`/`kernel`/`arch`/`target`/`command`），格式与 `rf_harness::env` 一致（FR-010）
+- [X] T010 [P] 创建 `tools/emit-mir.sh` 与 `tools/emit-llvm-ir.sh`：封装 `cargo rustc -- --emit=mir|llvm-ir`，输出落到 `target/ir/`（R-04 阶梯 3–4）
+- [X] T011 [P] 创建 `tools/run-miri.sh` 与 `tools/run-asan.sh`：统一 `MIRIFLAGS`（含 `-Zmiri-many-seeds`、`-Zmiri-tree-borrows` 开关）与 ASan 的 `-Zbuild-std` 参数（R-02 / quickstart §4 §5）
+- [X] T012 执行 `quickstart.md` §0 的环境基线校验，并把 `tools/env-record.sh` 的输出存档为 `acceptance/environment-baseline.md`（后续所有 OBSERVATIONS 的环境块以此为基准，FR-010 / FR-018）
 
 **Checkpoint**: 门禁未决项已裁定，工具链锁定，脚本可用。
 
@@ -102,18 +122,18 @@ Send/Sync 判定题集。
 **Independent Test**: `cargo test -p m1-ownership` 全绿；且对 `compile_fail/` 样本能在运行断言
 **之前**正确预测错误码与出错位置（quickstart §3 的先预测后验证循环）。
 
-- [ ] T026 [US1] 创建 `experiments/m1-ownership/Cargo.toml` 与 `src/lib.rs`：dev-dependency 指向 `rf-harness`；`src/lib.rs` 预先声明 `pub mod c01; pub mod c02; pub mod c03; pub mod c04;` 并创建四个空占位文件，使后续能力实验互不冲突（[P] 的前提）
-- [ ] T027 [US1] 编写 `learning/m1-ownership/concept.md`：按 learning-artifact §A，为 C-01…C-04 各写"一句话定义 / 底层机制 / ≥1 条常见误解 / 对应实验"，并在"与后续学习的关联"为每项写明与 Linux/eBPF/Aya 的关联点或显式标注"仅为理解基础"（FR-014）
-- [ ] T028 [P] [US1] 编写 `learning/m1-ownership/source-refs.md`：C-01 `core/src/ops/drop.rs` `Drop`、C-02 `core/src/mem/mod.rs` `replace`/`take`/`forget`、C-03 `core/src/cell.rs` `RefCell`/`BorrowFlag` + borrowck 记 `reference-fallback`、C-04 `core/src/marker.rs` `PhantomData` + elision 记 `reference-fallback`；逐条记录路径、符号、**实际行号**与"这段源码回答了什么"（FR-005 / §B2 已知 fallback 项）
-- [ ] T029 [P] [US1] C-01 实验：`experiments/m1-ownership/examples/c01_ownership.rs`（观察 drop 顺序与作用域结束时机，输出为 NON-ASSERTION）+ `tests/c01_ownership.rs`（稳定断言：用计数器验证 drop 次数与顺序，每个 `#[test]` 带 `CLAIM` 注释）
-- [ ] T030 [P] [US1] C-02 实验：`experiments/m1-ownership/examples/c02_move.rs`（move / `Copy` / `Clone` 三种改写的语义差异，US1 AS2）+ `tests/c02_move.rs`（断言 `mem::replace`/`take` 后的值、`forget` 后 drop 未发生）
-- [ ] T031 [P] [US1] C-03 实验：`experiments/m1-ownership/examples/c03_borrow.rs`（不可变 / 可变 / 多重借用与 NLL 缩短借用范围的现象）+ `compile_fail/c03_two_mut_borrows.rs`（首行 `//! EXPECT: E0499` + `//! CLAIM:`）+ `tests/c03_borrow.rs`（`rf_harness::compile_fail::expect_errors` 断言错误码；`RefCell` 的运行期 borrow panic 断言）
-- [ ] T032 [P] [US1] C-04 实验：`experiments/m1-ownership/examples/c04_lifetime.rs`（去掉显式标注后 elision 为何失效，US1 AS3）+ `compile_fail/c04_dangling_ref.rs`（`//! EXPECT: E0597`）+ `tests/c04_lifetime.rs`（错误码断言 + `PhantomData` 的 `size_of == 0` 断言）
-- [ ] T033 [US1] 用 `tools/emit-mir.sh` 导出 C-01/C-02 的 MIR，定位 **drop 插入点与移动语义**在 MIR 中的表现，结果作为 NON-ASSERTION 记入 `experiments/m1-ownership/OBSERVATIONS.md`（FR-004 阶梯 3 / experiment-contract §C3.3）
-- [ ] T034 [US1] 填写 `experiments/m1-ownership/OBSERVATIONS.md`：`tools/env-record.sh` 环境块 + 四个 example 的实际输出 + 完整 stderr 抄录 + 每条"解释"（回答"为什么"与"这不能证明什么"）+ 架构相关性判定
-- [ ] T035 [US1] 编写 `acceptance/criteria/c01.md`、`c02.md`、`c03.md`、`c04.md`：各含可直接复制的验证命令、≥1 条由**命令退出码**决定的判据（§D2）、源码引用已记录判据；MUST NOT 使用禁用措辞（§D1）
-- [ ] T036 [US1] 编写 `feynman/m1-ownership.md`：五个 REQUIRED 小节全部完成，`Capabilities covered` 精确等于 C-01…C-04；第 3、4 节每条论断显式引用本模块实验断言名或源码符号（§C2）；填写检验结果表
-- [ ] T037 [US1] 模块验收：`cargo test -p m1-ownership` 全绿 → 更新 `acceptance/capability-matrix.md` 中 C-01…C-04 的 `Status` 与 `Task` 列，`feynman_status = passed`，并在矩阵中标记 m1 为 **FR-012 硬前置已满足**
+- [X] T026 [US1] 创建 `experiments/m1-ownership/Cargo.toml` 与 `src/lib.rs`：dev-dependency 指向 `rf-harness`；`src/lib.rs` 预先声明 `pub mod c01; pub mod c02; pub mod c03; pub mod c04;` 并创建四个空占位文件，使后续能力实验互不冲突（[P] 的前提）
+- [X] T027 [US1] 编写 `learning/m1-ownership/concept.md`：按 learning-artifact §A，为 C-01…C-04 各写"一句话定义 / 底层机制 / ≥1 条常见误解 / 对应实验"，并在"与后续学习的关联"为每项写明与 Linux/eBPF/Aya 的关联点或显式标注"仅为理解基础"（FR-014）
+- [X] T028 [P] [US1] 编写 `learning/m1-ownership/source-refs.md`：C-01 `core/src/ops/drop.rs` `Drop`、C-02 `core/src/mem/mod.rs` `replace`/`take`/`forget`、C-03 `core/src/cell.rs` `RefCell`/`BorrowFlag` + borrowck 记 `reference-fallback`、C-04 `core/src/marker.rs` `PhantomData` + elision 记 `reference-fallback`；逐条记录路径、符号、**实际行号**与"这段源码回答了什么"（FR-005 / §B2 已知 fallback 项）
+- [X] T029 [P] [US1] C-01 实验：`experiments/m1-ownership/examples/c01_ownership.rs`（观察 drop 顺序与作用域结束时机，输出为 NON-ASSERTION）+ `tests/c01_ownership.rs`（稳定断言：用计数器验证 drop 次数与顺序，每个 `#[test]` 带 `CLAIM` 注释）
+- [X] T030 [P] [US1] C-02 实验：`experiments/m1-ownership/examples/c02_move.rs`（move / `Copy` / `Clone` 三种改写的语义差异，US1 AS2）+ `tests/c02_move.rs`（断言 `mem::replace`/`take` 后的值、`forget` 后 drop 未发生）
+- [X] T031 [P] [US1] C-03 实验：`experiments/m1-ownership/examples/c03_borrow.rs`（不可变 / 可变 / 多重借用与 NLL 缩短借用范围的现象）+ `compile_fail/c03_two_mut_borrows.rs`（首行 `//! EXPECT: E0499` + `//! CLAIM:`）+ `tests/c03_borrow.rs`（`rf_harness::compile_fail::expect_errors` 断言错误码；`RefCell` 的运行期 borrow panic 断言）
+- [X] T032 [P] [US1] C-04 实验：`experiments/m1-ownership/examples/c04_lifetime.rs`（去掉显式标注后 elision 为何失效，US1 AS3）+ `compile_fail/c04_dangling_ref.rs`（`//! EXPECT: E0597`）+ `tests/c04_lifetime.rs`（错误码断言 + `PhantomData` 的 `size_of == 0` 断言）
+- [X] T033 [US1] 用 `tools/emit-mir.sh` 导出 C-01/C-02 的 MIR，定位 **drop 插入点与移动语义**在 MIR 中的表现，结果作为 NON-ASSERTION 记入 `experiments/m1-ownership/OBSERVATIONS.md`（FR-004 阶梯 3 / experiment-contract §C3.3）
+- [X] T034 [US1] 填写 `experiments/m1-ownership/OBSERVATIONS.md`：`tools/env-record.sh` 环境块 + 四个 example 的实际输出 + 完整 stderr 抄录 + 每条"解释"（回答"为什么"与"这不能证明什么"）+ 架构相关性判定
+- [X] T035 [US1] 编写 `acceptance/criteria/c01.md`、`c02.md`、`c03.md`、`c04.md`：各含可直接复制的验证命令、≥1 条由**命令退出码**决定的判据（§D2）、源码引用已记录判据；MUST NOT 使用禁用措辞（§D1）
+- [X] T036 [US1] 编写 `feynman/m1-ownership.md`：五个 REQUIRED 小节全部完成，`Capabilities covered` 精确等于 C-01…C-04；第 3、4 节每条论断显式引用本模块实验断言名或源码符号（§C2）；填写检验结果表
+- [X] T037 [US1] 模块验收：`cargo test -p m1-ownership` 全绿 → 更新 `acceptance/capability-matrix.md` 中 C-01…C-04 的 `Status` 与 `Task` 列，`feynman_status = passed`，并在矩阵中标记 m1 为 **FR-012 硬前置已满足**
 
 **Checkpoint**: m1 完成 —— MVP 达成，US2 可以开始。
 
@@ -364,6 +384,7 @@ panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-
 
 ### Within Each User Story
 
+0. **`learner/mN-*/` 三件套（Learner Track）—— MUST 先于下列全部步骤提交**（§H3.4）→
 1. crate 骨架（预声明各能力子模块，使能力实验互不冲突）→
 2. `concept.md`（概念，可与 `source-refs.md` 并行）→
 3. 各能力的 `examples/` + `tests/`（**能力之间可并行**）→
@@ -445,6 +466,37 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - 每个任务完成后立即提交（Constitution X 可复现性 + T024 的冻结时点需要提交时间为证）。
 - 任何模块的 Feynman 五项检验若出现 fail，MUST 停止推进下一个 Story，并按 §Remediation
   把补齐任务写回本文件（FR-006 / Constitution Review gate）。
+
+---
+
+## 双轨产物任务（Dual-Track，T151–T161）
+
+按 learning-artifact-contract §H 产出 Learner Track。这些任务**穿插**在既有 Phase 中执行，
+不构成独立阶段 —— 每个模块的 T15x MUST 在该模块的 Answer Track 任务**之前**完成并提交
+（§H3.4 的提交顺序纪律）。
+
+### 归属 Phase 1（Setup）
+
+- [X] T151 创建 `learner/README.md`：说明双轨读法、两个目录的职责区别（`learner/` 提问 / `learning/` 回答）、§H4 打开 Answer Track 的三个条件、以及 §H3 的六类禁止内容清单；MUST 说明"打开答案不影响验收判定"（§H4.3）
+
+### 归属 Phase 2（Foundational）
+
+- [ ] T152 [P] 创建 `learner/_templates/guide.md`、`predictions.md`、`selfcheck.md`：分别按 §H2.1 / §H2.2 / §H2.3 的 REQUIRED 小节；`guide.md` 模板含提示阶梯三级骨架，`predictions.md` 模板含"未命中复盘"块与 §H2.2a 的先填后跑规则声明
+
+### 归属各 Story（MUST 先于该模块的 Answer Track 任务提交）
+
+- [X] T153 [US1] 创建 `learner/m1-ownership/{guide,predictions,selfcheck}.md`：覆盖 C-01…C-04；引导问题针对 drop 时机、移动与 `Copy` 的区别、两次 `&mut` 被拒的规则、elision 何时失效；源码定位只给 `core/src/ops/`、`core/src/mem/`、`core/src/cell.rs`、`core/src/marker.rs` 的**目录/文件范围**，不给行号（L4）；预测表含错误码、drop 顺序、`size_of` 三类预测项，值留空（L1/L2）
+- [ ] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
+- [ ] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
+- [ ] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
+- [ ] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
+- [ ] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
+- [ ] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
+- [ ] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表
+
+### 归属 Phase 11（Polish）
+
+- [ ] T161 双轨完整性与不泄漏核查：(a) 8 个模块各有 `learner/mN-*/` 三件套；(b) 逐文件人工核查 §H3.1 的 L1–L6 六类内容零出现，结果写入 `acceptance/dual-track-audit.md`；(c) 核查每个模块 Learner Track 的提交时点早于该模块 Answer Track（`git log --diff-filter=A --format='%ad %H' -- <path>` 比对），违反者记录理由；(d) 抽查 `predictions.md` 的预测列提交时点早于对应验证命令的产物提交时点（§H2.2a）
 
 ---
 

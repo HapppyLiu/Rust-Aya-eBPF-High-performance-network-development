@@ -1,0 +1,28 @@
+# Rust
+target/
+**/target/
+debug/
+release/
+*.rs.bk
+*.rlib
+*.prof*
+
+# Cargo.lock：本仓库是学习工程而非发布库，锁定依赖版本有利于可复现性
+# （Constitution X），因此**不**忽略 Cargo.lock。
+
+# 实验产物落盘目录（由 harness 与 tools/ 生成，均为 NON-ASSERTION 记录）
+target/ir/
+target/compile-fail/
+
+# 编辑器 / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# 日志与本地环境
+*.log
+.env
+.env.*
