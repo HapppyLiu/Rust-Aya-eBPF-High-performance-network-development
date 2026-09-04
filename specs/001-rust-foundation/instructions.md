@@ -139,3 +139,76 @@ Project structure should separate：
 
 实验应该尽可能小、独立、可运行、可观察。
 
+---------------------------------------------------------------------------------
+/speckit-checklist 
+
+检查：Learning Quality
+例如：□ 每个学习目标都有 Acceptance Criteria
+□ 每个核心知识都有实验
+□ unsafe 都有 Safety Invariant
+□ no_std 有可运行实验
+□ Send/Sync 有编译器验证
+□ raw pointer 有 unsafe experiment
+□ FFI 有 C/Rust boundary experiment
+□ 每个阶段都有 Feynman question
+□ 每个实验都有运行命令
+□ 每个实验都有预期结果
+□ 学习目标可以追溯到 Spec
+
+----------------------------------------------------------------------------------
+/speckit-tasks 
+得到类似：
+Phase 1 — Foundation
+
+- [ ] T001 建立 Rust experiment workspace
+- [ ] T002 建立 experiment execution convention
+- [ ] T003 建立 acceptance-test convention
+
+
+Phase 2 — Ownership
+
+- [ ] T004 阅读 ownership 基础
+- [ ] T005 创建 move experiment
+- [ ] T006 创建 Copy experiment
+- [ ] T007 创建 Clone experiment
+- [ ] T008 分析编译器错误
+- [ ] T009 编写 Feynman tutorial
+- [ ] T010 完成 acceptance test
+
+
+Phase 3 — Borrowing
+
+- [ ] T011 immutable borrow experiment
+- [ ] T012 mutable borrow experiment
+- [ ] T013 multiple borrow experiment
+- [ ] T014 NLL experiment
+- [ ] T015 Feynman tutorial
+- [ ] T016 acceptance test
+
+
+Phase 4 — Unsafe Rust
+
+- [ ] T017 raw pointer experiment
+- [ ] T018 pointer arithmetic experiment
+- [ ] T019 alignment experiment
+- [ ] T020 aliasing experiment
+- [ ] T021 UB experiment
+- [ ] T022 safe abstraction experiment
+- [ ] T023 Feynman tutorial
+- [ ] T024 acceptance test
+
+
+Phase 5 — no_std
+
+- [ ] T025 core experiment
+- [ ] T026 no_std experiment
+- [ ] T027 panic experiment
+- [ ] T028 allocator analysis
+- [ ] T029 core/alloc/std dependency analysis
+- [ ] T030 Feynman tutorial
+- [ ] T031 acceptance test
+
+Tasks 应从 spec.md、plan.md 等设计文档推导，并按照 user story / phase 组织、建立依赖关系和可独立验证的任务。
+
+----------------------------------------------------------------------------------------------------------------
+
