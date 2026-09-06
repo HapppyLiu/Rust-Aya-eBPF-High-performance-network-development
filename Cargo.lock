@@ -10,5 +10,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "m2-types"
+version = "0.1.0"
+dependencies = [
+ "rf-harness",
+]
+
+[[package]]
 name = "rf-harness"
 version = "0.1.0"

@@ -36,9 +36,9 @@ planned → in-progress → experiment-passed → accepted
 | C-02 | Move semantics | m1 | US1 | T030 | `c02_move` | `core/src/mem/mod.rs:953/886/189` `replace`/`take`/`forget` | [criteria/c02.md](criteria/c02.md) | n/a | **accepted** |
 | C-03 | Borrowing | m1 | US1 | T031 | `c03_borrow` | `core/src/cell.rs:849` `RefCell`、`:945` `BorrowCounter` | [criteria/c03.md](criteria/c03.md) | n/a | **accepted** |
 | C-04 | Lifetime | m1 | US1 | T032 | `c04_lifetime` | `core/src/marker.rs:811` `PhantomData`、`:805`（零大小保证） | [criteria/c04.md](criteria/c04.md) | n/a | **accepted** |
-| C-05 | Struct / Enum | m2 | US2 | T041 | `c05_layout` | `core/src/option.rs`（niche）、`core/src/mem/mod.rs` `size_of` | [criteria/c05.md](criteria/c05.md) | n/a | planned |
-| C-06 | Trait | m2 | US2 | T042 | `c06_trait` | `core/src/fmt/mod.rs` `Display`、`core/src/ops/deref.rs` `Deref` | [criteria/c06.md](criteria/c06.md) | n/a | planned |
-| C-07 | Generic | m2 | US2 | T043 | `c07_generic` | `core/src/iter/traits/iterator.rs`、`core/src/cmp.rs` `PartialOrd` | [criteria/c07.md](criteria/c07.md) | n/a | planned |
+| C-05 | Struct / Enum | m2 | US2 | T041 | `c05_layout` | `core/src/option.rs:118-153` NPO、`:598` `Option`；`core/src/mem/mod.rs:373/540/1617` | [criteria/c05.md](criteria/c05.md) | n/a | **accepted** |
+| C-06 | Trait | m2 | US2 | T042 | `c06_trait` | `core/src/fmt/mod.rs:1187/1212` `Display`/`fmt`、`core/src/ops/deref.rs:139/150` `Deref` | [criteria/c06.md](criteria/c06.md) | n/a | **accepted** |
+| C-07 | Generic | m2 | US2 | T043 | `c07_generic` | `core/src/iter/traits/iterator.rs:42` `Iterator`、`core/src/cmp.rs:250/1366` `PartialEq`/`PartialOrd` | [criteria/c07.md](criteria/c07.md) | n/a | **accepted** |
 | C-08 | Error handling | m3 | US3 | T052 | `c08_error` | `core/src/result.rs`、`core/src/convert/mod.rs` `From` | [criteria/c08.md](criteria/c08.md) | n/a | planned |
 | C-09 | Iterator | m3 | US3 | T053 | `c09_iterator` | `core/src/iter/traits/iterator.rs`、`core/src/iter/adapters/map.rs` | [criteria/c09.md](criteria/c09.md) | n/a | planned |
 | C-10 | Closure | m3 | US3 | T054 | `c10_closure` | `core/src/ops/function.rs` `Fn`/`FnMut`/`FnOnce` | [criteria/c10.md](criteria/c10.md) | n/a | planned |
@@ -64,7 +64,7 @@ planned → in-progress → experiment-passed → accepted
 | Module | Story | Priority | Capabilities | Prerequisite | Feynman | Status | FR-012 硬前置 |
 |--------|-------|----------|-------------|--------------|---------|--------|--------------|
 | m1 | US1 | P1 | C-01…C-04 | — | **passed** | **accepted** | **是** |
-| m2 | US2 | P2 | C-05…C-07 | m1 | pending | pending | 否 |
+| m2 | US2 | P2 | C-05…C-07 | m1 | **passed** | **accepted** | 否 |
 | m3 | US3 | P2 | C-08…C-11 | m2 | pending | pending | 否 |
 | m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | pending | pending | 否 |
 | m5 | US5 | P1 | C-15…C-20 | m4 | pending | pending | **是** |

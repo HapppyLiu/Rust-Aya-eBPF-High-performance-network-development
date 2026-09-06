@@ -147,17 +147,17 @@ Send/Sync 判定题集。
 **Independent Test**: `cargo test -p m2-types` 全绿；能对泛型版本与 trait 对象版本各自标注分发方式，
 并由 `size_of` 断言与 IR 观察验证标注正确。
 
-- [ ] T038 [US2] 创建 `experiments/m2-types/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c05; pub mod c06; pub mod c07;` 占位）
-- [ ] T039 [US2] 编写 `learning/m2-types/concept.md`（C-05…C-07 四要素齐备 + FR-014 关联点）
-- [ ] T040 [P] [US2] 编写 `learning/m2-types/source-refs.md`：C-05 `core/src/option.rs`（niche）+ `core/src/mem/mod.rs` `size_of`；C-06 `core/src/fmt/mod.rs` `Display` + `core/src/ops/deref.rs` `Deref`；C-07 `core/src/iter/traits/iterator.rs` + `core/src/cmp.rs` `PartialOrd`
-- [ ] T041 [P] [US2] C-05 实验：`experiments/m2-types/examples/c05_layout.rs`（enum 状态机的判别式与变体空间占用，US2 AS2）+ `tests/c05_layout.rs`（`size_of`/`align_of`/`offset_of` 断言 + `size_of::<Option<&u8>>() == size_of::<&u8>()` 的 niche 断言）
-- [ ] T042 [P] [US2] C-06 实验：`experiments/m2-types/examples/c06_trait.rs`（同一 trait 的静态分发与 trait 对象两版对照）+ `tests/c06_trait.rs`（`size_of::<&dyn Trait>() == 2 * size_of::<usize>()` 等确定性断言）
-- [ ] T043 [P] [US2] C-07 实验：`experiments/m2-types/examples/c07_generic.rs`（单态化的可观察后果）+ `compile_fail/c07_missing_bound.rs`（`//! EXPECT: E0277`）+ `tests/c07_generic.rs`（错误码断言 + 泛型与 trait 对象行为等价性断言）
-- [ ] T044 [US2] 用 `tools/emit-llvm-ir.sh` 对照静态分发（直接调用）与动态分发（vtable 间接调用）的 IR 结构，并用 nightly `-Z print-mono-items` 记录单态化实例数量；全部作为 NON-ASSERTION 记入 OBSERVATIONS（FR-004 阶梯 4–5 / R-07）
-- [ ] T045 [US2] 填写 `experiments/m2-types/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性；IR 文本一律 NON-ASSERTION）
-- [ ] T046 [US2] 编写 `acceptance/criteria/c05.md`、`c06.md`、`c07.md`（含退出码判据）
-- [ ] T047 [US2] 编写 `feynman/m2-types.md`（五项检验；`Capabilities covered` = C-05…C-07）
-- [ ] T048 [US2] 模块验收：`cargo test -p m2-types` 全绿 → 更新 capability-matrix 的 C-05…C-07 状态与 Task 列
+- [X] T038 [US2] 创建 `experiments/m2-types/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c05; pub mod c06; pub mod c07;` 占位）
+- [X] T039 [US2] 编写 `learning/m2-types/concept.md`（C-05…C-07 四要素齐备 + FR-014 关联点）
+- [X] T040 [P] [US2] 编写 `learning/m2-types/source-refs.md`：C-05 `core/src/option.rs`（niche）+ `core/src/mem/mod.rs` `size_of`；C-06 `core/src/fmt/mod.rs` `Display` + `core/src/ops/deref.rs` `Deref`；C-07 `core/src/iter/traits/iterator.rs` + `core/src/cmp.rs` `PartialOrd`
+- [X] T041 [P] [US2] C-05 实验：`experiments/m2-types/examples/c05_layout.rs`（enum 状态机的判别式与变体空间占用，US2 AS2）+ `tests/c05_layout.rs`（`size_of`/`align_of`/`offset_of` 断言 + `size_of::<Option<&u8>>() == size_of::<&u8>()` 的 niche 断言）
+- [X] T042 [P] [US2] C-06 实验：`experiments/m2-types/examples/c06_trait.rs`（同一 trait 的静态分发与 trait 对象两版对照）+ `tests/c06_trait.rs`（`size_of::<&dyn Trait>() == 2 * size_of::<usize>()` 等确定性断言）
+- [X] T043 [P] [US2] C-07 实验：`experiments/m2-types/examples/c07_generic.rs`（单态化的可观察后果）+ `compile_fail/c07_missing_bound.rs`（`//! EXPECT: E0277`）+ `tests/c07_generic.rs`（错误码断言 + 泛型与 trait 对象行为等价性断言）
+- [X] T044 [US2] 用 `tools/emit-llvm-ir.sh` 对照静态分发（直接调用）与动态分发（vtable 间接调用）的 IR 结构，并用 nightly `-Z print-mono-items` 记录单态化实例数量；全部作为 NON-ASSERTION 记入 OBSERVATIONS（FR-004 阶梯 4–5 / R-07）
+- [X] T045 [US2] 填写 `experiments/m2-types/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性；IR 文本一律 NON-ASSERTION）
+- [X] T046 [US2] 编写 `acceptance/criteria/c05.md`、`c06.md`、`c07.md`（含退出码判据）
+- [X] T047 [US2] 编写 `feynman/m2-types.md`（五项检验；`Capabilities covered` = C-05…C-07）
+- [X] T048 [US2] 模块验收：`cargo test -p m2-types` 全绿 → 更新 capability-matrix 的 C-05…C-07 状态与 Task 列
 
 **Checkpoint**: m2 完成 —— US3 可以开始。
 
@@ -481,12 +481,12 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 
 ### 归属 Phase 2（Foundational）
 
-- [ ] T152 [P] 创建 `learner/_templates/guide.md`、`predictions.md`、`selfcheck.md`：分别按 §H2.1 / §H2.2 / §H2.3 的 REQUIRED 小节；`guide.md` 模板含提示阶梯三级骨架，`predictions.md` 模板含"未命中复盘"块与 §H2.2a 的先填后跑规则声明
+- [X] T152 [P] 创建 `learner/_templates/guide.md`、`predictions.md`、`selfcheck.md`：分别按 §H2.1 / §H2.2 / §H2.3 的 REQUIRED 小节；`guide.md` 模板含提示阶梯三级骨架，`predictions.md` 模板含"未命中复盘"块与 §H2.2a 的先填后跑规则声明
 
 ### 归属各 Story（MUST 先于该模块的 Answer Track 任务提交）
 
 - [X] T153 [US1] 创建 `learner/m1-ownership/{guide,predictions,selfcheck}.md`：覆盖 C-01…C-04；引导问题针对 drop 时机、移动与 `Copy` 的区别、两次 `&mut` 被拒的规则、elision 何时失效；源码定位只给 `core/src/ops/`、`core/src/mem/`、`core/src/cell.rs`、`core/src/marker.rs` 的**目录/文件范围**，不给行号（L4）；预测表含错误码、drop 顺序、`size_of` 三类预测项，值留空（L1/L2）
-- [ ] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
+- [X] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
 - [ ] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
 - [ ] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
 - [ ] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文

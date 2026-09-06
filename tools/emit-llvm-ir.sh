@@ -25,9 +25,27 @@ if [[ "${1:-}" == "--example" ]]; then
     shift 2
 fi
 
-echo "==> emitting LLVM IR for ${LABEL} -> ${OUT_DIR}/"
-cargo rustc -p "$PKG" "${TARGET_ARGS[@]}" -- \
-    --emit=llvm-ir -o "${OUT_DIR}/${LABEL}.ll"
+DEST="${OUT_DIR}/${LABEL}.ll"
+echo "==> emitting LLVM IR for ${LABEL} -> ${DEST}"
 
-echo "==> ${OUT_DIR}/${LABEL}.ll ($(wc -l <"${OUT_DIR}/${LABEL}.ll") lines)"
+# rustc 会在 `-o` 之外仍产出 link 产物，并给文件名追加 metadata hash
+# （"output file name will be adapted for each output type"），因此先落到临时目录，
+# 再把唯一的 .ll 规范化成稳定文件名。直接信任 `-o` 的路径会拿到不存在的文件。
+STAGE="$(mktemp -d)"
+trap 'rm -rf "$STAGE"' EXIT
+
+cargo rustc -p "$PKG" "${TARGET_ARGS[@]}" -- \
+    --emit=llvm-ir -o "${STAGE}/${LABEL}.ll" 2>&1 |
+    grep -v -e 'multiple output types requested' -e 'ignoring --out-dir' -e '^warning: *$' || true
+
+mapfile -t EMITTED < <(find "$STAGE" -name '*.ll' -type f)
+if [[ ${#EMITTED[@]} -ne 1 ]]; then
+    echo "!! 预期恰好一个 .ll 产物，实际 ${#EMITTED[@]} 个：${EMITTED[*]:-<none>}" >&2
+    exit 1
+fi
+
+mkdir -p "$OUT_DIR"
+mv "${EMITTED[0]}" "$DEST"
+
+echo "==> ${DEST} ($(wc -l <"$DEST") lines)"
 echo "    30KB 级 IR 会淹没教学重点；抄录进 OBSERVATIONS 时只取相关函数体，并标注 [NON-ASSERTION]。"

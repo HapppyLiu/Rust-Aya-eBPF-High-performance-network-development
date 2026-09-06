@@ -1,0 +1,16 @@
+[package]
+name = "m2-types"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "US2 / C-05..C-07：结构体与枚举布局、trait 分发、泛型单态化"
+
+[dependencies]
+
+# harness 只在验收侧使用：examples/ 负责观察（不依赖 harness），
+# tests/ 负责断言（用 harness 做错误码断言）。
+[dev-dependencies]
+rf-harness.workspace = true
+
+[lints]
+workspace = true

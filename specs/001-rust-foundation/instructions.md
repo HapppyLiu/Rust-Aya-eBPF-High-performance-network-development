@@ -235,3 +235,8 @@ Tasks 应从 spec.md、plan.md 等设计文档推导，并按照 user story / ph
 
 这样你可以先只看 Learner Track 自测，卡住以后再打开 Answer Track。
 不要让答案直接出现在学习框架里
+
+---------------------------------------------------------------------------
+
+/speckit-implement 
+开始实现 US2（m2-types，C-05…C-07）
