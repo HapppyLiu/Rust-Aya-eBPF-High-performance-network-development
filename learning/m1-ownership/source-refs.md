@@ -27,6 +27,11 @@
 | C-03 | `core/src/cell.rs` | `type BorrowCounter = isize` | 945 | library | **借用状态用一个有符号整数编码**：这是运行期借用检查的全部数据结构 |
 | C-03 | `core/src/cell.rs` | `const UNUSED: BorrowCounter = 0` / `is_writing` / `is_reading` | 946 / 949 / 954 | library | 编码方案：0 = 无借用，正数 = 读借用计数，负数 = 写借用 |
 | C-03 | `core/src/cell.rs` | `panic_already_mutably_borrowed` | 924 | library | 运行期违规的**后果是 panic**，而非编译失败 |
+| C-03 | `core/src/cell.rs` | `pub struct UnsafeCell<T: ?Sized>` | 2323 | library | 内部可变性的**唯一**底层载体；`Cell`/`RefCell`/`Mutex` 都建在它之上 |
+| C-03 | `core/src/cell.rs` | `UnsafeCell` 文档 "The core primitive for interior mutability in Rust." | 2141 | library | 标准库自己给它的定位 —— 它是这一族类型的地基，不是其中一员 |
+| C-03 | `core/src/cell.rs` | `UnsafeCell` 文档 "the only valid way to obtain a `*mut T`" | 2226 | library | 为什么"从 `&self` 改内部值"只能经由它：其他做法都是 UB |
+| C-03 | `core/src/cell.rs` | `pub struct Cell<T: ?Sized>` | 312 | library | 字段是 `value: UnsafeCell<T>` —— 证明上面那条链的第一环 |
+| C-03 | `core/src/cell.rs` | `impl<T: Copy> Cell<T>` | 536 | library | `Cell::get` 要求 `T: Copy`：它靠**从不交出引用**回避别名问题 |
 | C-03 | — Rust Reference §"Borrow checker"（`reference/destructors.html` 与 NLL RFC 2094） | — | — | **reference-fallback** | 编译期借用检查属编译器内建（`rustc_borrowck`），无库代码对应 |
 | C-04 | `core/src/marker.rs` | `pub struct PhantomData<T: PointeeSized>` | 811 | library | 不占空间却参与类型检查的类型；定义只有**一行**，无字段 |
 | C-04 | `core/src/marker.rs` | `PhantomData` 文档 `size_of::<PhantomData<T>>() == 0` | 805 | library | 零大小由标准库**文档化保证**，不是实现巧合 → 可作稳定断言 |
@@ -40,6 +45,7 @@ sed -n '206,209p'  "$SRC/core/src/ops/drop.rs"    # C-01 Drop + lang item
 sed -n '419p;454p' "$SRC/core/src/marker.rs"      # C-01 Copy 与互斥理由
 sed -n '189p;822p;886p;953p' "$SRC/core/src/mem/mod.rs"  # C-02 forget/swap/take/replace
 sed -n '849,851p;945,956p' "$SRC/core/src/cell.rs"       # C-03 RefCell + BorrowCounter
+sed -n '312,313p;536p;2141p;2226p;2323,2324p' "$SRC/core/src/cell.rs"  # C-03 Cell/UnsafeCell 链
 sed -n '805p;811p' "$SRC/core/src/marker.rs"      # C-04 PhantomData
 ```
 

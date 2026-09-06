@@ -5,6 +5,9 @@
 > 本文件属于 **Answer Track**。对应的 Learner Track 是
 > [`learner/m1-ownership/guide.md`](../../learner/m1-ownership/guide.md)。
 > 如果你还没做过那边的预测表，先去做 —— 这份文件读过之后就不能再自测了。
+>
+> 本文件按**概念**组织。若你想按 `guide.md` §1 的**题号**逐条对答案，
+> 看 [`guide-answers.md`](./guide-answers.md)。
 
 ## 这个模块回答什么问题
 
