@@ -171,18 +171,18 @@ Send/Sync 判定题集。
 **Independent Test**: `cargo test -p m3-composition` 全绿；对多阶段迭代器链的求值顺序与**分配次数**
 的预测与 `CountingAllocator` 实测一致（US3 AS1）。
 
-- [ ] T049 [US3] 创建 `experiments/m3-composition/Cargo.toml` 与 `src/lib.rs`：声明 `pub mod c08..c11` 占位，并在 `tests/` 侧启用 `#[global_allocator] static A: CountingAllocator`（harness-api §counting_alloc）
-- [ ] T050 [US3] 编写 `learning/m3-composition/concept.md`（C-08…C-11 四要素 + FR-014 关联点；C-10 捕获方式与 US4 Send/Sync 的衔接 MUST 写明，US3 AS2）
-- [ ] T051 [P] [US3] 编写 `learning/m3-composition/source-refs.md`：C-08 `core/src/result.rs` + `core/src/convert/mod.rs` `From` + `std/src/error.rs`；C-09 `core/src/iter/traits/iterator.rs` + `core/src/iter/adapters/map.rs`；C-10 `core/src/ops/function.rs` `Fn`/`FnMut`/`FnOnce`；C-11 `alloc/src/boxed.rs`、`alloc/src/rc.rs`、`alloc/src/sync.rs` `Arc`
-- [ ] T052 [P] [US3] C-08 实验：`experiments/m3-composition/examples/c08_error.rs`（显式错误码写法 → `Result` + `?` 改写，行为一致）+ `compile_fail/c08_missing_from.rs`（`//! EXPECT: E0277`，`?` 缺少 `From` 转换）+ `tests/c08_error.rs`（错误传播路径断言 + 错误码断言）
-- [ ] T053 [P] [US3] C-09 实验：`experiments/m3-composition/examples/c09_iterator.rs`（惰性求值顺序的打印观察）+ `tests/c09_iterator.rs`（用 `rf_harness::counting_alloc::measure` 断言 `collect` 与 `sum` 链路的**确定性分配次数**，US3 AS1）
-- [ ] T054 [P] [US3] C-10 实验：`experiments/m3-composition/examples/c10_closure.rs`（按引用 / 按可变引用 / 按值三种捕获）+ `compile_fail/c10_borrow_escapes_thread.rs`（`//! EXPECT: E0373` 或 `E0277`）+ `tests/c10_closure.rs`（`Fn`/`FnMut`/`FnOnce` 分类断言 + 捕获决定能否跨线程移动的错误码断言）
-- [ ] T055 [P] [US3] C-11 实验：`experiments/m3-composition/examples/c11_smart_ptr.rs`（`Box`/`Rc`/`Arc` 的所有权语义与误用后果）+ `compile_fail/c11_rc_across_threads.rs`（`//! EXPECT: E0277`）+ `tests/c11_smart_ptr.rs`（`Rc::strong_count` 断言 + 分配次数断言 + 错误码断言）
-- [ ] T056 [US3] 串行化分配计数：把使用 `measure` 的断言集中到单个 `#[test]` 或用 crate 内互斥量串行化，并在 `experiments/m3-composition/OBSERVATIONS.md` 中说明 `CountingAllocator` 对**整个 crate 全局生效**（harness-api §并发约束）
-- [ ] T057 [US3] 填写 `experiments/m3-composition/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性）
-- [ ] T058 [US3] 编写 `acceptance/criteria/c08.md`、`c09.md`、`c10.md`、`c11.md`（含退出码判据）
-- [ ] T059 [US3] 编写 `feynman/m3-composition.md`（五项检验；`Capabilities covered` = C-08…C-11）
-- [ ] T060 [US3] 模块验收：`cargo test -p m3-composition` 全绿 → 更新 capability-matrix 的 C-08…C-11 状态与 Task 列
+- [X] T049 [US3] 创建 `experiments/m3-composition/Cargo.toml` 与 `src/lib.rs`：声明 `pub mod c08..c11` 占位，并在 `tests/` 侧启用 `#[global_allocator] static A: CountingAllocator`（harness-api §counting_alloc）
+- [X] T050 [US3] 编写 `learning/m3-composition/concept.md`（C-08…C-11 四要素 + FR-014 关联点；C-10 捕获方式与 US4 Send/Sync 的衔接 MUST 写明，US3 AS2）
+- [X] T051 [P] [US3] 编写 `learning/m3-composition/source-refs.md`：C-08 `core/src/result.rs` + `core/src/convert/mod.rs` `From` + `std/src/error.rs`；C-09 `core/src/iter/traits/iterator.rs` + `core/src/iter/adapters/map.rs`；C-10 `core/src/ops/function.rs` `Fn`/`FnMut`/`FnOnce`；C-11 `alloc/src/boxed.rs`、`alloc/src/rc.rs`、`alloc/src/sync.rs` `Arc`
+- [X] T052 [P] [US3] C-08 实验：`experiments/m3-composition/examples/c08_error.rs`（显式错误码写法 → `Result` + `?` 改写，行为一致）+ `compile_fail/c08_missing_from.rs`（`//! EXPECT: E0277`，`?` 缺少 `From` 转换）+ `tests/c08_error.rs`（错误传播路径断言 + 错误码断言）
+- [X] T053 [P] [US3] C-09 实验：`experiments/m3-composition/examples/c09_iterator.rs`（惰性求值顺序的打印观察）+ `tests/c09_iterator.rs`（用 `rf_harness::counting_alloc::measure` 断言 `collect` 与 `sum` 链路的**确定性分配次数**，US3 AS1）
+- [X] T054 [P] [US3] C-10 实验：`experiments/m3-composition/examples/c10_closure.rs`（按引用 / 按可变引用 / 按值三种捕获）+ `compile_fail/c10_borrow_escapes_thread.rs`（`//! EXPECT: E0373` 或 `E0277`）+ `tests/c10_closure.rs`（`Fn`/`FnMut`/`FnOnce` 分类断言 + 捕获决定能否跨线程移动的错误码断言）
+- [X] T055 [P] [US3] C-11 实验：`experiments/m3-composition/examples/c11_smart_ptr.rs`（`Box`/`Rc`/`Arc` 的所有权语义与误用后果）+ `compile_fail/c11_rc_across_threads.rs`（`//! EXPECT: E0277`）+ `tests/c11_smart_ptr.rs`（`Rc::strong_count` 断言 + 分配次数断言 + 错误码断言）
+- [X] T056 [US3] 串行化分配计数：把使用 `measure` 的断言集中到单个 `#[test]` 或用 crate 内互斥量串行化，并在 `experiments/m3-composition/OBSERVATIONS.md` 中说明 `CountingAllocator` 对**整个 crate 全局生效**（harness-api §并发约束）
+- [X] T057 [US3] 填写 `experiments/m3-composition/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性）
+- [X] T058 [US3] 编写 `acceptance/criteria/c08.md`、`c09.md`、`c10.md`、`c11.md`（含退出码判据）
+- [X] T059 [US3] 编写 `feynman/m3-composition.md`（五项检验；`Capabilities covered` = C-08…C-11）
+- [X] T060 [US3] 模块验收：`cargo test -p m3-composition` 全绿 → 更新 capability-matrix 的 C-08…C-11 状态与 Task 列
 
 **Checkpoint**: m3 完成 —— US4 可以开始（T024 的题集必须已冻结）。
 
@@ -487,7 +487,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 
 - [X] T153 [US1] 创建 `learner/m1-ownership/{guide,predictions,selfcheck}.md`：覆盖 C-01…C-04；引导问题针对 drop 时机、移动与 `Copy` 的区别、两次 `&mut` 被拒的规则、elision 何时失效；源码定位只给 `core/src/ops/`、`core/src/mem/`、`core/src/cell.rs`、`core/src/marker.rs` 的**目录/文件范围**，不给行号（L4）；预测表含错误码、drop 顺序、`size_of` 三类预测项，值留空（L1/L2）
 - [X] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
-- [ ] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
+- [X] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
 - [ ] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
 - [ ] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
 - [ ] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失

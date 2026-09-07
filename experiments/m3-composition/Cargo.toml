@@ -1,0 +1,16 @@
+[package]
+name = "m3-composition"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "US3 / C-08..C-11：错误处理、迭代器、闭包捕获、智能指针"
+
+[dependencies]
+
+# harness 只在验收侧使用：examples/ 负责观察（不依赖 harness），
+# tests/ 负责断言（用 harness 做错误码断言与分配计数）。
+[dev-dependencies]
+rf-harness.workspace = true
+
+[lints]
+workspace = true

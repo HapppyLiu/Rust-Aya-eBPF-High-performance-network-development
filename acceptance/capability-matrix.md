@@ -39,10 +39,10 @@ planned → in-progress → experiment-passed → accepted
 | C-05 | Struct / Enum | m2 | US2 | T041 | `c05_layout` | `core/src/option.rs:118-153` NPO、`:598` `Option`；`core/src/mem/mod.rs:373/540/1617` | [criteria/c05.md](criteria/c05.md) | n/a | **accepted** |
 | C-06 | Trait | m2 | US2 | T042 | `c06_trait` | `core/src/fmt/mod.rs:1187/1212` `Display`/`fmt`、`core/src/ops/deref.rs:139/150` `Deref` | [criteria/c06.md](criteria/c06.md) | n/a | **accepted** |
 | C-07 | Generic | m2 | US2 | T043 | `c07_generic` | `core/src/iter/traits/iterator.rs:42` `Iterator`、`core/src/cmp.rs:250/1366` `PartialEq`/`PartialOrd` | [criteria/c07.md](criteria/c07.md) | n/a | **accepted** |
-| C-08 | Error handling | m3 | US3 | T052 | `c08_error` | `core/src/result.rs`、`core/src/convert/mod.rs` `From` | [criteria/c08.md](criteria/c08.md) | n/a | planned |
-| C-09 | Iterator | m3 | US3 | T053 | `c09_iterator` | `core/src/iter/traits/iterator.rs`、`core/src/iter/adapters/map.rs` | [criteria/c09.md](criteria/c09.md) | n/a | planned |
-| C-10 | Closure | m3 | US3 | T054 | `c10_closure` | `core/src/ops/function.rs` `Fn`/`FnMut`/`FnOnce` | [criteria/c10.md](criteria/c10.md) | n/a | planned |
-| C-11 | Smart pointer | m3 | US3 | T055 | `c11_smart_ptr` | `alloc/src/boxed.rs`、`alloc/src/rc.rs`、`alloc/src/sync.rs` `Arc` | [criteria/c11.md](criteria/c11.md) | n/a | planned |
+| C-08 | Error handling | m3 | US3 | T052 | `c08_error` | `core/src/result.rs:557` `Result`、`:2185/2192` `FromResidual`/`From::from`；`core/src/convert/mod.rs:589` `From`；`std/src/error.rs:4` re-export | [criteria/c08.md](criteria/c08.md) | n/a | **accepted** |
+| C-09 | Iterator | m3 | US3 | T053 | `c09_iterator` | `core/src/iter/traits/iterator.rs:42/78/831`；`core/src/iter/adapters/map.rs:61/106/111` | [criteria/c09.md](criteria/c09.md) | n/a | **accepted** |
+| C-10 | Closure | m3 | US3 | T054 | `c10_closure` | `core/src/ops/function.rs:76/163/242` `Fn`/`FnMut`/`FnOnce` | [criteria/c10.md](criteria/c10.md) | n/a | **accepted** |
+| C-11 | Smart pointer | m3 | US3 | T055 | `c11_smart_ptr` | `alloc/src/boxed.rs:234`；`alloc/src/rc.rs:320/330/1814/2495`；`alloc/src/sync.rs:269/279/2383` | [criteria/c11.md](criteria/c11.md) | n/a | **accepted** |
 | C-12 | Send / Sync | m4 | US4 | T064, T067 | `c12_send_sync` | `core/src/marker.rs` `Send`/`Sync` | [criteria/c12.md](criteria/c12.md) | miri | planned |
 | C-13 | Concurrency | m4 | US4 | T065 | `c13_concurrency` | `std/src/thread/mod.rs`、`std/src/sync/mutex.rs` | [criteria/c13.md](criteria/c13.md) | miri（many-seeds） | planned |
 | C-14 | Atomic | m4 | US4 | T066 | `c14_atomic` | `core/src/sync/atomic.rs` `Ordering`/`AtomicUsize` | [criteria/c14.md](criteria/c14.md) | miri（many-seeds） | planned |
@@ -65,7 +65,7 @@ planned → in-progress → experiment-passed → accepted
 |--------|-------|----------|-------------|--------------|---------|--------|--------------|
 | m1 | US1 | P1 | C-01…C-04 | — | **passed** | **accepted** | **是** |
 | m2 | US2 | P2 | C-05…C-07 | m1 | **passed** | **accepted** | 否 |
-| m3 | US3 | P2 | C-08…C-11 | m2 | pending | pending | 否 |
+| m3 | US3 | P2 | C-08…C-11 | m2 | **passed** | **accepted** | 否 |
 | m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | pending | pending | 否 |
 | m5 | US5 | P1 | C-15…C-20 | m4 | pending | pending | **是** |
 | m6 | US6 | P2 | C-21 | m5 | pending | pending | 否 |
