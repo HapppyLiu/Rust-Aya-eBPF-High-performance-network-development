@@ -43,9 +43,9 @@ planned → in-progress → experiment-passed → accepted
 | C-09 | Iterator | m3 | US3 | T053 | `c09_iterator` | `core/src/iter/traits/iterator.rs:42/78/831`；`core/src/iter/adapters/map.rs:61/106/111` | [criteria/c09.md](criteria/c09.md) | n/a | **accepted** |
 | C-10 | Closure | m3 | US3 | T054 | `c10_closure` | `core/src/ops/function.rs:76/163/242` `Fn`/`FnMut`/`FnOnce` | [criteria/c10.md](criteria/c10.md) | n/a | **accepted** |
 | C-11 | Smart pointer | m3 | US3 | T055 | `c11_smart_ptr` | `alloc/src/boxed.rs:234`；`alloc/src/rc.rs:320/330/1814/2495`；`alloc/src/sync.rs:269/279/2383` | [criteria/c11.md](criteria/c11.md) | n/a | **accepted** |
-| C-12 | Send / Sync | m4 | US4 | T064, T067 | `c12_send_sync` | `core/src/marker.rs` `Send`/`Sync` | [criteria/c12.md](criteria/c12.md) | miri | planned |
-| C-13 | Concurrency | m4 | US4 | T065 | `c13_concurrency` | `std/src/thread/mod.rs`、`std/src/sync/mutex.rs` | [criteria/c13.md](criteria/c13.md) | miri（many-seeds） | planned |
-| C-14 | Atomic | m4 | US4 | T066 | `c14_atomic` | `core/src/sync/atomic.rs` `Ordering`/`AtomicUsize` | [criteria/c14.md](criteria/c14.md) | miri（many-seeds） | planned |
+| C-12 | Send / Sync | m4 | US4 | T064, T067 | `c12_send_sync` | `core/src/marker.rs:92/105/657` `Send`/`Sync`；`core/src/cell.rs:317/325` | [criteria/c12.md](criteria/c12.md) | miri | **accepted** |
+| C-13 | Concurrency | m4 | US4 | T065 | `c13_concurrency` | `std/src/thread/functions.rs:125`、`scoped.rs:141`；`std/src/sync/poison/mutex.rs:227/257` | [criteria/c13.md](criteria/c13.md) | miri（many-seeds） | **accepted** |
+| C-14 | Atomic | m4 | US4 | T066 | `c14_atomic` | `core/src/sync/atomic.rs:361/366/442/3825` `Atomic`/`Ordering`/`AtomicUsize` | [criteria/c14.md](criteria/c14.md) | miri（many-seeds） | **accepted** |
 | C-15 | Unsafe Rust | m5 | US5 | T077, T078 | `c15_unsafe` | `core/src/slice/mod.rs` `get_unchecked` | [criteria/c15.md](criteria/c15.md) | miri | planned |
 | C-16 | Raw pointer | m5 | US5 | T079, T080 | `c16_raw_ptr` | `core/src/ptr/mod.rs`、`core/src/ptr/const_ptr.rs` `read`/`write` | [criteria/c16.md](criteria/c16.md) | miri | planned |
 | C-17 | Pointer arithmetic | m5 | US5 | T081, T082 | `c17_ptr_arith` | `core/src/ptr/const_ptr.rs` `add`/`offset`/`wrapping_add` | [criteria/c17.md](criteria/c17.md) | miri | planned |
@@ -66,7 +66,7 @@ planned → in-progress → experiment-passed → accepted
 | m1 | US1 | P1 | C-01…C-04 | — | **passed** | **accepted** | **是** |
 | m2 | US2 | P2 | C-05…C-07 | m1 | **passed** | **accepted** | 否 |
 | m3 | US3 | P2 | C-08…C-11 | m2 | **passed** | **accepted** | 否 |
-| m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | pending | pending | 否 |
+| m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | **passed** | **accepted** | 否 |
 | m5 | US5 | P1 | C-15…C-20 | m4 | pending | pending | **是** |
 | m6 | US6 | P2 | C-21 | m5 | pending | pending | 否 |
 | m7 | US7 | P1 | C-22…C-24 | m6 | pending | pending | **是** |

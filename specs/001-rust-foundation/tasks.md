@@ -107,7 +107,7 @@ Send/Sync 判定题集。
 - [ ] T021 [P] 创建 `learning/_templates/concept.md` 与 `learning/_templates/source-refs.md`：按 learning-artifact §A 与 §B 的 REQUIRED 小节与表头（含 `kind = library | reference-fallback` 与"这段源码回答了什么"列）
 - [ ] T022 [P] 创建 `feynman/_template.md`：按 learning-artifact §C 的五个 REQUIRED 小节 + 检验结果表（五项合取，FR-006）
 - [ ] T023 [P] 创建 `experiments/_templates/OBSERVATIONS.md`：顶部环境块占位 + NON-ASSERTION 记录块（命令 / 输出 / 解释 / 架构相关性），解释字段含 T001 定义的内容下限（experiment-contract §C3.2 §C7）
-- [ ] T024 定稿并提交 `acceptance/send-sync-quiz.md`（≥10 个**自定义类型**，每题给出完整定义，要求判定 Send/Sync 并写推导依据）与 `acceptance/send-sync-quiz.answers.md`（作答前 MUST NOT 打开）——**MUST 在 US4 学习开始前完成**，冻结时点以版本控制提交时间为证（SC-007 / R-10 / learning-artifact §F1）
+- [X] T024 定稿并提交 `acceptance/send-sync-quiz.md`（≥10 个**自定义类型**，每题给出完整定义，要求判定 Send/Sync 并写推导依据）与 `acceptance/send-sync-quiz.answers.md`（作答前 MUST NOT 打开）——**MUST 在 US4 学习开始前完成**，冻结时点以版本控制提交时间为证（SC-007 / R-10 / learning-artifact §F1）
 - [ ] T025 运行基线一键验证：`cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings`、`cargo test --workspace`（此时仅含 harness）全绿，作为后续"全量一致性判定"的起点（quickstart §1 / experiment-contract §C8.1）
 
 **Checkpoint**: 验证设施可用、追踪链就位、题集已冻结 —— US1 可以开始。
@@ -197,19 +197,19 @@ Send/Sync 判定题集。
 `MIRIFLAGS="-Zmiri-many-seeds" cargo +nightly miri test -p m4-concurrency` 无意外 UB；
 且 T024 冻结题集的一次性作答错 ≤1 题并每题有推导依据（SC-007）。
 
-- [ ] T061 [US4] 创建 `experiments/m4-concurrency/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c12; pub mod c13; pub mod c14;` 与 quiz 用的自定义类型模块 `pub mod quiz_types;` 占位）
-- [ ] T062 [US4] 编写 `learning/m4-concurrency/concept.md`（C-12…C-14 四要素；MUST 分别陈述 Send 与 Sync **各自约束什么**而非混为一谈，US4 AS1；FR-014 写明与 BPF map 并发访问、lock-free 的关联）
-- [ ] T063 [P] [US4] 编写 `learning/m4-concurrency/source-refs.md`：C-12 `core/src/marker.rs`（`unsafe auto trait Send`/`Sync` 与负向 impl，含实际行号）；C-13 `std/src/thread/mod.rs`、`std/src/sync/mutex.rs`；C-14 `core/src/sync/atomic.rs`（`Ordering`、`AtomicUsize`）
-- [ ] T064 [P] [US4] C-12 实验：`experiments/m4-concurrency/examples/c12_send_sync.rs`（含内部可变性的类型能否跨线程共享）+ `compile_fail/c12_cell_across_threads.rs`（`//! EXPECT: E0277`）+ `tests/c12_send_sync.rs`（`fn assert_send<T: Send>()` / `assert_sync<T: Sync>()` 正向断言 + 错误码负向断言）
-- [ ] T065 [P] [US4] C-13 实验：`experiments/m4-concurrency/examples/c13_concurrency.rs`（`thread::scope` / `Mutex` 的线程交错观察，输出标 NON-ASSERTION）+ `compile_fail/c13_data_race.rs`（在安全 Rust 中实现数据竞争被拒绝的具体规则，US4 AS3）+ `tests/c13_concurrency.rs`（与交错顺序**无关**的不变量断言，如累加总和；MUST NOT 断言完成顺序）
-- [ ] T066 [P] [US4] C-14 实验：`experiments/m4-concurrency/examples/c14_atomic.rs`（放宽内存序后哪些执行顺序变为可能，US4 AS2）+ `tests/c14_atomic.rs`（`SeqCst` 下的确定性不变量断言 + `Ordering` 语义的可断言事实；unsafe 块如有 MUST 带五要素 SAFETY）
-- [ ] T067 [US4] 编写 `experiments/m4-concurrency/tests/c12_send_sync_quiz.rs`：对 `acceptance/send-sync-quiz.md` 中每个自定义类型做正向 `assert_send`/`assert_sync` 断言，并为应当**不**满足的类型在 `compile_fail/quiz_*.rs` 建立 `E0277` 负向条目——编译器是最终裁判（learning-artifact §F4）
-- [ ] T068 [US4] 一次性作答 `acceptance/send-sync-quiz.md` 并把作答与推导写入 `acceptance/send-sync-quiz.result.md`（作答**完成前** MUST NOT 打开 answers 文件），随后与 T067 的编译器判定对照，记录正确率（通过线见 T002 统一后的表述，SC-007）
-- [ ] T069 [US4] 运行 `MIRIFLAGS="-Zmiri-many-seeds" cargo +nightly miri test -p m4-concurrency`（经 `tools/run-miri.sh`），把 `ub_verdict` 与所用 seed 数记入 OBSERVATIONS；未运行时 MUST 记 `n/a` 而非 `clean`（FR-019 / experiment-contract §C5.2）
-- [ ] T070 [US4] 填写 `experiments/m4-concurrency/OBSERVATIONS.md`（环境块 + 线程交错输出标注为 NON-ASSERTION + 解释 + 内存序表现的**架构相关性**判定：x86_64 强序对放宽内存序的掩盖作用，FR-018）
-- [ ] T071 [US4] 编写 `acceptance/criteria/c12.md`、`c13.md`、`c14.md`（C-12 判据 MUST 包含 quiz 的客观校验命令）
-- [ ] T072 [US4] 编写 `feynman/m4-concurrency.md`（五项检验；MUST 承载 quiz 每题的推导依据，SC-007 要求"给出推导依据而非结论"）
-- [ ] T073 [US4] 模块验收：`cargo test -p m4-concurrency` 全绿 + Miri many-seeds 通过 → 更新 capability-matrix 的 C-12…C-14 状态与 Task 列
+- [X] T061 [US4] 创建 `experiments/m4-concurrency/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c12; pub mod c13; pub mod c14;` 与 quiz 用的自定义类型模块 `pub mod quiz_types;` 占位）
+- [X] T062 [US4] 编写 `learning/m4-concurrency/concept.md`（C-12…C-14 四要素；MUST 分别陈述 Send 与 Sync **各自约束什么**而非混为一谈，US4 AS1；FR-014 写明与 BPF map 并发访问、lock-free 的关联）
+- [X] T063 [P] [US4] 编写 `learning/m4-concurrency/source-refs.md`：C-12 `core/src/marker.rs`（`unsafe auto trait Send`/`Sync` 与负向 impl，含实际行号）；C-13 `std/src/thread/mod.rs`、`std/src/sync/mutex.rs`；C-14 `core/src/sync/atomic.rs`（`Ordering`、`AtomicUsize`）
+- [X] T064 [P] [US4] C-12 实验：`experiments/m4-concurrency/examples/c12_send_sync.rs`（含内部可变性的类型能否跨线程共享）+ `compile_fail/c12_cell_across_threads.rs`（`//! EXPECT: E0277`）+ `tests/c12_send_sync.rs`（`fn assert_send<T: Send>()` / `assert_sync<T: Sync>()` 正向断言 + 错误码负向断言）
+- [X] T065 [P] [US4] C-13 实验：`experiments/m4-concurrency/examples/c13_concurrency.rs`（`thread::scope` / `Mutex` 的线程交错观察，输出标 NON-ASSERTION）+ `compile_fail/c13_data_race.rs`（在安全 Rust 中实现数据竞争被拒绝的具体规则，US4 AS3）+ `tests/c13_concurrency.rs`（与交错顺序**无关**的不变量断言，如累加总和；MUST NOT 断言完成顺序）
+- [X] T066 [P] [US4] C-14 实验：`experiments/m4-concurrency/examples/c14_atomic.rs`（放宽内存序后哪些执行顺序变为可能，US4 AS2）+ `tests/c14_atomic.rs`（`SeqCst` 下的确定性不变量断言 + `Ordering` 语义的可断言事实；unsafe 块如有 MUST 带五要素 SAFETY）
+- [X] T067 [US4] 编写 `experiments/m4-concurrency/tests/c12_send_sync_quiz.rs`：对 `acceptance/send-sync-quiz.md` 中每个自定义类型做正向 `assert_send`/`assert_sync` 断言，并为应当**不**满足的类型在 `compile_fail/quiz_*.rs` 建立 `E0277` 负向条目——编译器是最终裁判（learning-artifact §F4）
+- [X] T068 [US4] 一次性作答 `acceptance/send-sync-quiz.md` 并把作答与推导写入 `acceptance/send-sync-quiz.result.md`（作答**完成前** MUST NOT 打开 answers 文件），随后与 T067 的编译器判定对照，记录正确率（通过线见 T002 统一后的表述，SC-007）
+- [X] T069 [US4] 运行 `MIRIFLAGS="-Zmiri-many-seeds" cargo +nightly miri test -p m4-concurrency`（经 `tools/run-miri.sh`），把 `ub_verdict` 与所用 seed 数记入 OBSERVATIONS；未运行时 MUST 记 `n/a` 而非 `clean`（FR-019 / experiment-contract §C5.2）
+- [X] T070 [US4] 填写 `experiments/m4-concurrency/OBSERVATIONS.md`（环境块 + 线程交错输出标注为 NON-ASSERTION + 解释 + 内存序表现的**架构相关性**判定：x86_64 强序对放宽内存序的掩盖作用，FR-018）
+- [X] T071 [US4] 编写 `acceptance/criteria/c12.md`、`c13.md`、`c14.md`（C-12 判据 MUST 包含 quiz 的客观校验命令）
+- [X] T072 [US4] 编写 `feynman/m4-concurrency.md`（五项检验；MUST 承载 quiz 每题的推导依据，SC-007 要求"给出推导依据而非结论"）
+- [X] T073 [US4] 模块验收：`cargo test -p m4-concurrency` 全绿 + Miri many-seeds 通过 → 更新 capability-matrix 的 C-12…C-14 状态与 Task 列
 
 **Checkpoint**: m4 完成 —— US5 可以开始。
 
@@ -488,7 +488,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - [X] T153 [US1] 创建 `learner/m1-ownership/{guide,predictions,selfcheck}.md`：覆盖 C-01…C-04；引导问题针对 drop 时机、移动与 `Copy` 的区别、两次 `&mut` 被拒的规则、elision 何时失效；源码定位只给 `core/src/ops/`、`core/src/mem/`、`core/src/cell.rs`、`core/src/marker.rs` 的**目录/文件范围**，不给行号（L4）；预测表含错误码、drop 顺序、`size_of` 三类预测项，值留空（L1/L2）
 - [X] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
 - [X] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
-- [ ] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
+- [X] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
 - [ ] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
 - [ ] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
 - [ ] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
