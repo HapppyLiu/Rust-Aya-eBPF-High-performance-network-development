@@ -193,16 +193,19 @@ MUST 附带一条**事前 UB 类别预测**，写在实验源文件首行的 `//
 | # | 允许的子串 | 对应 UB 类别 | 典型触发 |
 |---|-----------|-------------|---------|
 | W1 | `Undefined Behavior` | 通用类别前缀（**每条 expected-ub 断言 MUST 包含它**） | 全部 |
-| W2 | `memory access failed` | 越界 / 已释放内存访问 | C-15、C-17、C-20 |
+| W2 | `memory access failed` **或** `` `assume` called with `false` `` | 越界 / 已释放内存访问。后者是 Miri 1.100 + `ub_checks` 对 `get_unchecked` 越界的拦截点：在真正的 memory access 之前以 `assume(false)` 报出，**同一条越界规则**，不是另一类 UB | C-15、C-17、C-20 |
 | W3 | `attempting a read access` | 读越界（与 W2 联合出现） | C-16、C-20 |
 | W4 | `attempting a write access` | 写越界（与 W2 联合出现） | C-17、C-20 |
-| W5 | `not sufficiently aligned` | 对齐违规 | C-18 |
+| W5 | `not sufficiently aligned` **或** `but alignment` | 对齐违规。后者匹配 Miri 1.100 的 `alignment N is required` 措辞 | C-18 |
 | W6 | `has been freed` | use-after-free | C-16 |
-| W7 | `out-of-bounds pointer arithmetic` | 指针运算越出分配 | C-17 |
+| W7 | `out-of-bounds pointer arithmetic` **或** `in-bounds pointer arithmetic failed` | 指针运算越出分配。后者是 Miri 1.100 的实际措辞（"in-bounds arithmetic failed" = 越界） | C-17 |
 | W8 | `does not exist in the borrow stack` | Stacked Borrows 别名违规 | C-19 |
-| W9 | `/tag-mismatch|protected tag/`（Tree Borrows 二选一） | Tree Borrows 别名违规 | C-19 |
-| W10 | `uninitialized memory` | 未初始化读取 | C-20 |
+| W9 | `tag-mismatch` **或** `protected tag` **或** `foreign write` | Tree Borrows 别名违规。前两项为历史措辞；Miri 1.100 的 TB 报告用 `foreign write` / `Disabled` | C-19 |
+| W10 | `uninitialized memory` **或** `memory is uninitialized` | 未初始化读取。后者是 Miri 1.100 的实际措辞 | C-20 |
 | W11 | `Data race detected` | 数据竞争 | C-13、C-14 |
+
+同一 W 编号的多个子串是 **OR**：断言命中其中**任意一条**即视为该 W 命中。
+新增子串属于 C5.3b 契约修订，理由：pinned nightly 1.100.0 的 Miri 诊断措辞相对 T001 起草时的用词有漂移，类别本身未变。
 
 **规则 C5.3a**：每条 `expected-ub` 断言 MUST 由 **W1 + 至少一条 W2–W11** 组成。
 只断言 W1 不合格 —— `Undefined Behavior` 对所有 UB 都成立，单独使用等于没有预测类别。

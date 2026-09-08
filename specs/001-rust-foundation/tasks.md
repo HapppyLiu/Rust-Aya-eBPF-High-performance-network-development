@@ -227,28 +227,28 @@ Send/Sync 判定题集。
 **说明**：每项能力做**成对实验**——"安全侧"（正确用法 + 安全抽象，`ub_verdict = clean`）与
 "UB 对照侧"（故意违反约束，`ub_verdict = expected-ub`）。这是 CHK029 要求的双侧覆盖。
 
-- [ ] T074 [US5] 创建 `experiments/m5-unsafe/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c15..c20` 占位；crate 级启用 `undocumented_unsafe_blocks` 与 `multiple_unsafe_ops_per_block` 为 deny）
-- [ ] T075 [US5] 编写 `learning/m5-unsafe/concept.md`（C-15…C-20 四要素；MUST 说明"UB 不等于崩溃"；FR-014 关联点按 T004 的裁定形式写明 eBPF packet parsing 的边界检查对应关系，US5 AS4）
-- [ ] T076 [P] [US5] 编写 `learning/m5-unsafe/source-refs.md`：C-15 `core/src/slice/mod.rs` `get_unchecked` + UB 定义记 `reference-fallback`；C-16 `core/src/ptr/mod.rs`、`core/src/ptr/const_ptr.rs` `read`/`write`；C-17 `const_ptr.rs` `add`/`offset`/`wrapping_add`；C-18 `core/src/mem/mod.rs` `align_of` + `core/src/ptr/mod.rs` `read_unaligned`；C-19 `core/src/cell.rs` `UnsafeCell`；C-20 `core/src/slice/raw.rs` `from_raw_parts` + `alloc/src/vec/mod.rs` `set_len`
-- [ ] T077 [P] [US5] C-15 安全侧：`examples/c15_unsafe.rs` + `tests/c15_unsafe.rs`（`get_unchecked` 在已校验边界内的正确用法，unsafe 块带五要素 SAFETY，Miri `clean`）
-- [ ] T078 [P] [US5] C-15 UB 对照：`examples/c15_unsafe_ub.rs`（`get_unchecked` 越界）+ `tests/c15_unsafe_ub.rs`（`rf_harness::miri::run_example` → `reported_ub()` 为真 + 类别子串断言，`ub_verdict = expected-ub`）
-- [ ] T079 [P] [US5] C-16 安全侧：`examples/c16_raw_ptr.rs` + `tests/c16_raw_ptr.rs`（`addr_of!`、`ptr::read`/`write` 的正确用法；断言可用"地址的关系性质"而非具体数值，§C2.2 例外）
-- [ ] T080 [P] [US5] C-16 UB 对照：`examples/c16_raw_ptr_ub.rs`（悬垂指针读取 / use-after-free）+ `tests/c16_raw_ptr_ub.rs`（Miri 类别断言，`expected-ub`）
-- [ ] T081 [P] [US5] C-17 安全侧：`examples/c17_ptr_arith.rs` + `tests/c17_ptr_arith.rs`（`add`/`offset` 在分配内的偏移 + `wrapping_add` 语义对照）
-- [ ] T082 [P] [US5] C-17 UB 对照：`examples/c17_ptr_arith_ub.rs`（偏移越出分配 / provenance 越界）+ `tests/c17_ptr_arith_ub.rs`（Miri 类别断言，`expected-ub`）
-- [ ] T083 [P] [US5] C-18 安全侧：`examples/c18_alignment.rs` + `tests/c18_alignment.rs`（`align_of` 断言 + `read_unaligned` 的正确用法 + `(p as usize) % align_of::<T>() == 0` 关系断言）
-- [ ] T084 [P] [US5] C-18 UB 对照：`examples/c18_alignment_ub.rs` + `tests/c18_alignment_ub.rs`——**本 Feature 的核心教学对照**：普通运行正常退出并打印"合理"结果，同一源码在 Miri 下判定 UB；断言只匹配类别文本（`Undefined Behavior`、`memory access failed`），`alloc` 编号/偏移/行号为 NON-ASSERTION（quickstart §4 / research R-02 / US5 AS2）
-- [ ] T085 [P] [US5] C-19 安全侧：`examples/c19_aliasing.rs` + `tests/c19_aliasing.rs`（`UnsafeCell` 的合法内部可变性，`clean`）
-- [ ] T086 [P] [US5] C-19 UB 对照 + 双别名模型：`examples/c19_aliasing_ub.rs`（重叠可变引用）+ `tests/c19_aliasing_ub.rs`（默认 Stacked Borrows 与 `MIRIFLAGS="-Zmiri-tree-borrows"` 两轮判定，结论不一致时按 T004 写入 plan 的规则处理）
-- [ ] T087 [P] [US5] C-20 安全侧：`examples/c20_mem_safety.rs` + `tests/c20_mem_safety.rs`（由 unsafe 实现、对外暴露**安全接口**的最小抽象，`slice::from_raw_parts` 正确用法，Miri `clean`，US5 AS3）
-- [ ] T088 [P] [US5] C-20 UB 对照：`examples/c20_mem_safety_ub.rs`（`Vec::set_len` 暴露未初始化内存 / 越界 slice；并构造"该抽象不安全时的调用序列"，US5 AS3 后半）+ `tests/c20_mem_safety_ub.rs`（Miri 类别断言）
-- [ ] T089 [US5] SAFETY 五要素审查：`cargo clippy -p m5-unsafe --all-targets -- -D warnings` 零告警（机械兜底）+ 逐块人工核查有效性/对齐/别名/provenance/生命周期**实质**覆盖，不适用项写明原因；结果记入 `acceptance/safety-invariant-audit.md`（FR-008 / SC-010 / §C6）
-- [ ] T090 [US5] 边界检查移除对照：在 `examples/c20_bounds_check.rs` 中做"带边界检查的字节解析 → 移除检查"对照，说明越界读取后果，并按 T004 的裁定形式把该模式与 eBPF verifier 的边界要求写入 `learning/m5-unsafe/concept.md` 的关联小节（US5 AS4，MUST NOT 编写 eBPF 程序，FR-017）
-- [ ] T091 [US5] 全模块 UB 扫描：`cargo +nightly miri test -p m5-unsafe` 与 `MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe` 两轮，逐实验记录 `ub_verdict` 实际值并与事前**预期值**比对（不一致按 T001 的规则判 fail 并重写预测）
-- [ ] T092 [US5] 填写 `experiments/m5-unsafe/OBSERVATIONS.md`（环境块 + 12 个 example 输出 + 每条解释 MUST 包含"这**不能**证明什么" + 架构相关性：x86_64 容忍未对齐访问、aarch64 可能 SIGBUS，不可跨架构推广）
-- [ ] T093 [US5] 编写 `acceptance/criteria/c15.md` … `c20.md`：每条 MUST 含 `cargo test` 与 `cargo +nightly miri test` 两条命令、`ub_verdict` 预期值、以及"每个 unsafe 块 SAFETY 覆盖五要素"判据
-- [ ] T094 [US5] 编写 `feynman/m5-unsafe.md`（五项检验；第 5 节的验证性问题 MUST 包含"去掉这个边界检查，Miri 会报告哪一类 UB"这类可暴露理解缺口的问题）
-- [ ] T095 [US5] 模块验收：`cargo test -p m5-unsafe` 全绿 + 两轮 Miri 判定与预期一致 + SAFETY 审计通过 → 更新 capability-matrix 的 C-15…C-20 状态，并标记 m5 为 **FR-012 硬前置已满足**
+- [X] T074 [US5] 创建 `experiments/m5-unsafe/Cargo.toml` 与 `src/lib.rs`（声明 `pub mod c15..c20` 占位；crate 级启用 `undocumented_unsafe_blocks` 与 `multiple_unsafe_ops_per_block` 为 deny）
+- [X] T075 [US5] 编写 `learning/m5-unsafe/concept.md`（C-15…C-20 四要素；MUST 说明"UB 不等于崩溃"；FR-014 关联点按 T004 的裁定形式写明 eBPF packet parsing 的边界检查对应关系，US5 AS4）
+- [X] T076 [P] [US5] 编写 `learning/m5-unsafe/source-refs.md`：C-15 `core/src/slice/mod.rs` `get_unchecked` + UB 定义记 `reference-fallback`；C-16 `core/src/ptr/mod.rs`、`core/src/ptr/const_ptr.rs` `read`/`write`；C-17 `const_ptr.rs` `add`/`offset`/`wrapping_add`；C-18 `core/src/mem/mod.rs` `align_of` + `core/src/ptr/mod.rs` `read_unaligned`；C-19 `core/src/cell.rs` `UnsafeCell`；C-20 `core/src/slice/raw.rs` `from_raw_parts` + `alloc/src/vec/mod.rs` `set_len`
+- [X] T077 [P] [US5] C-15 安全侧：`examples/c15_unsafe.rs` + `tests/c15_unsafe.rs`（`get_unchecked` 在已校验边界内的正确用法，unsafe 块带五要素 SAFETY，Miri `clean`）
+- [X] T078 [P] [US5] C-15 UB 对照：`examples/c15_unsafe_ub.rs`（`get_unchecked` 越界）+ `tests/c15_unsafe_ub.rs`（`rf_harness::miri::run_example` → `reported_ub()` 为真 + 类别子串断言，`ub_verdict = expected-ub`）
+- [X] T079 [P] [US5] C-16 安全侧：`examples/c16_raw_ptr.rs` + `tests/c16_raw_ptr.rs`（`addr_of!`、`ptr::read`/`write` 的正确用法；断言可用"地址的关系性质"而非具体数值，§C2.2 例外）
+- [X] T080 [P] [US5] C-16 UB 对照：`examples/c16_raw_ptr_ub.rs`（悬垂指针读取 / use-after-free）+ `tests/c16_raw_ptr_ub.rs`（Miri 类别断言，`expected-ub`）
+- [X] T081 [P] [US5] C-17 安全侧：`examples/c17_ptr_arith.rs` + `tests/c17_ptr_arith.rs`（`add`/`offset` 在分配内的偏移 + `wrapping_add` 语义对照）
+- [X] T082 [P] [US5] C-17 UB 对照：`examples/c17_ptr_arith_ub.rs`（偏移越出分配 / provenance 越界）+ `tests/c17_ptr_arith_ub.rs`（Miri 类别断言，`expected-ub`）
+- [X] T083 [P] [US5] C-18 安全侧：`examples/c18_alignment.rs` + `tests/c18_alignment.rs`（`align_of` 断言 + `read_unaligned` 的正确用法 + `(p as usize) % align_of::<T>() == 0` 关系断言）
+- [X] T084 [P] [US5] C-18 UB 对照：`examples/c18_alignment_ub.rs` + `tests/c18_alignment_ub.rs`——**本 Feature 的核心教学对照**：普通运行正常退出并打印"合理"结果，同一源码在 Miri 下判定 UB；断言只匹配类别文本（`Undefined Behavior`、`memory access failed`），`alloc` 编号/偏移/行号为 NON-ASSERTION（quickstart §4 / research R-02 / US5 AS2）
+- [X] T085 [P] [US5] C-19 安全侧：`examples/c19_aliasing.rs` + `tests/c19_aliasing.rs`（`UnsafeCell` 的合法内部可变性，`clean`）
+- [X] T086 [P] [US5] C-19 UB 对照 + 双别名模型：`examples/c19_aliasing_ub.rs`（重叠可变引用）+ `tests/c19_aliasing_ub.rs`（默认 Stacked Borrows 与 `MIRIFLAGS="-Zmiri-tree-borrows"` 两轮判定，结论不一致时按 T004 写入 plan 的规则处理）
+- [X] T087 [P] [US5] C-20 安全侧：`examples/c20_mem_safety.rs` + `tests/c20_mem_safety.rs`（由 unsafe 实现、对外暴露**安全接口**的最小抽象，`slice::from_raw_parts` 正确用法，Miri `clean`，US5 AS3）
+- [X] T088 [P] [US5] C-20 UB 对照：`examples/c20_mem_safety_ub.rs`（`Vec::set_len` 暴露未初始化内存 / 越界 slice；并构造"该抽象不安全时的调用序列"，US5 AS3 后半）+ `tests/c20_mem_safety_ub.rs`（Miri 类别断言）
+- [X] T089 [US5] SAFETY 五要素审查：`cargo clippy -p m5-unsafe --all-targets -- -D warnings` 零告警（机械兜底）+ 逐块人工核查有效性/对齐/别名/provenance/生命周期**实质**覆盖，不适用项写明原因；结果记入 `acceptance/safety-invariant-audit.md`（FR-008 / SC-010 / §C6）
+- [X] T090 [US5] 边界检查移除对照：在 `examples/c20_bounds_check.rs` 中做"带边界检查的字节解析 → 移除检查"对照，说明越界读取后果，并按 T004 的裁定形式把该模式与 eBPF verifier 的边界要求写入 `learning/m5-unsafe/concept.md` 的关联小节（US5 AS4，MUST NOT 编写 eBPF 程序，FR-017）
+- [X] T091 [US5] 全模块 UB 扫描：`cargo +nightly miri test -p m5-unsafe` 与 `MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe` 两轮，逐实验记录 `ub_verdict` 实际值并与事前**预期值**比对（不一致按 T001 的规则判 fail 并重写预测）
+- [X] T092 [US5] 填写 `experiments/m5-unsafe/OBSERVATIONS.md`（环境块 + 12 个 example 输出 + 每条解释 MUST 包含"这**不能**证明什么" + 架构相关性：x86_64 容忍未对齐访问、aarch64 可能 SIGBUS，不可跨架构推广）
+- [X] T093 [US5] 编写 `acceptance/criteria/c15.md` … `c20.md`：每条 MUST 含 `cargo test` 与 `cargo +nightly miri test` 两条命令、`ub_verdict` 预期值、以及"每个 unsafe 块 SAFETY 覆盖五要素"判据
+- [X] T094 [US5] 编写 `feynman/m5-unsafe.md`（五项检验；第 5 节的验证性问题 MUST 包含"去掉这个边界检查，Miri 会报告哪一类 UB"这类可暴露理解缺口的问题）
+- [X] T095 [US5] 模块验收：`cargo test -p m5-unsafe` 全绿 + 两轮 Miri 判定与预期一致 + SAFETY 审计通过 → 更新 capability-matrix 的 C-15…C-20 状态，并标记 m5 为 **FR-012 硬前置已满足**
 
 **Checkpoint**: m5 完成 —— US6 可以开始。
 
@@ -489,7 +489,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - [X] T154 [US2] 创建 `learner/m2-types/{guide,predictions,selfcheck}.md`：覆盖 C-05…C-07；预测项含 enum 布局、`Option<&T>` 是否与 `&T` 同宽、`&dyn Trait` 宽度、单态化实例数
 - [X] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
 - [X] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
-- [ ] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
+- [X] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
 - [ ] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
 - [ ] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
 - [ ] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表

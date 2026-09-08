@@ -1,0 +1,16 @@
+[package]
+name = "m5-unsafe"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "US5 / C-15..C-20：Unsafe、裸指针、指针运算、对齐、别名、安全抽象"
+
+[dependencies]
+
+# harness 只在验收侧使用：examples/ 负责观察（不依赖 harness），
+# tests/ 负责断言（用 harness 做 Miri 类别断言）。
+[dev-dependencies]
+rf-harness.workspace = true
+
+[lints]
+workspace = true

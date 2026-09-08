@@ -31,5 +31,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "m5-unsafe"
+version = "0.1.0"
+dependencies = [
+ "rf-harness",
+]
+
+[[package]]
 name = "rf-harness"
 version = "0.1.0"

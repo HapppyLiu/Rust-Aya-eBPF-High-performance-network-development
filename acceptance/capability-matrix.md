@@ -46,12 +46,12 @@ planned → in-progress → experiment-passed → accepted
 | C-12 | Send / Sync | m4 | US4 | T064, T067 | `c12_send_sync` | `core/src/marker.rs:92/105/657` `Send`/`Sync`；`core/src/cell.rs:317/325` | [criteria/c12.md](criteria/c12.md) | miri | **accepted** |
 | C-13 | Concurrency | m4 | US4 | T065 | `c13_concurrency` | `std/src/thread/functions.rs:125`、`scoped.rs:141`；`std/src/sync/poison/mutex.rs:227/257` | [criteria/c13.md](criteria/c13.md) | miri（many-seeds） | **accepted** |
 | C-14 | Atomic | m4 | US4 | T066 | `c14_atomic` | `core/src/sync/atomic.rs:361/366/442/3825` `Atomic`/`Ordering`/`AtomicUsize` | [criteria/c14.md](criteria/c14.md) | miri（many-seeds） | **accepted** |
-| C-15 | Unsafe Rust | m5 | US5 | T077, T078 | `c15_unsafe` | `core/src/slice/mod.rs` `get_unchecked` | [criteria/c15.md](criteria/c15.md) | miri | planned |
-| C-16 | Raw pointer | m5 | US5 | T079, T080 | `c16_raw_ptr` | `core/src/ptr/mod.rs`、`core/src/ptr/const_ptr.rs` `read`/`write` | [criteria/c16.md](criteria/c16.md) | miri | planned |
-| C-17 | Pointer arithmetic | m5 | US5 | T081, T082 | `c17_ptr_arith` | `core/src/ptr/const_ptr.rs` `add`/`offset`/`wrapping_add` | [criteria/c17.md](criteria/c17.md) | miri | planned |
-| C-18 | Alignment | m5 | US5 | T083, T084 | `c18_alignment` | `core/src/mem/mod.rs` `align_of`、`core/src/ptr/mod.rs` `read_unaligned` | [criteria/c18.md](criteria/c18.md) | miri | planned |
-| C-19 | Aliasing | m5 | US5 | T085, T086 | `c19_aliasing` | `core/src/cell.rs` `UnsafeCell` | [criteria/c19.md](criteria/c19.md) | miri（SB + TB 对照） | planned |
-| C-20 | Memory safety | m5 | US5 | T087, T088, T090 | `c20_mem_safety` | `core/src/slice/raw.rs` `from_raw_parts`、`alloc/src/vec/mod.rs` `set_len` | [criteria/c20.md](criteria/c20.md) | miri | planned |
+| C-15 | Unsafe Rust | m5 | US5 | T077, T078 | `c15_unsafe` | `core/src/slice/mod.rs:640` `get_unchecked`、`:612-619` Safety；UB 定义 reference-fallback | [criteria/c15.md](criteria/c15.md) | miri | **accepted** |
+| C-16 | Raw pointer | m5 | US5 | T079, T080 | `c16_raw_ptr` | `core/src/ptr/mod.rs:1692/1916/2729` `read`/`write`/`addr_of`；`const_ptr.rs:1148` | [criteria/c16.md](criteria/c16.md) | miri | **accepted** |
+| C-17 | Pointer arithmetic | m5 | US5 | T081, T082 | `c17_ptr_arith` | `core/src/ptr/const_ptr.rs:354/838/1035` `offset`/`add`/`wrapping_add` | [criteria/c17.md](criteria/c17.md) | miri | **accepted** |
+| C-18 | Alignment | m5 | US5 | T083, T084 | `c18_alignment` | `core/src/mem/mod.rs:540` `align_of`；`core/src/ptr/mod.rs:1810` `read_unaligned` | [criteria/c18.md](criteria/c18.md) | miri | **accepted** |
+| C-19 | Aliasing | m5 | US5 | T085, T086 | `c19_aliasing` | `core/src/cell.rs:2323/2328/2443` `UnsafeCell`/`!Sync`/`get` | [criteria/c19.md](criteria/c19.md) | miri（SB + TB 对照） | **accepted** |
+| C-20 | Memory safety | m5 | US5 | T087, T088, T090 | `c20_mem_safety` | `core/src/slice/raw.rs:124` `from_raw_parts`；`alloc/src/vec/mod.rs:2224` `set_len` | [criteria/c20.md](criteria/c20.md) | miri | **accepted** |
 | C-21 | FFI | m6 | US6 | T100, T101, T102, T103 | `c21_ffi` | `core/src/ffi/mod.rs` `c_int`/`c_char`、`std/src/ffi/c_str.rs` `CStr` | [criteria/c21.md](criteria/c21.md) | asan | planned |
 | C-22 | no_std | m7 | US7 | T112 | `c22_nostd` | `core/src/lib.rs` `#![no_std]`、`std/src/lib.rs` | [criteria/c22.md](criteria/c22.md) | compile-time | planned |
 | C-23 | core / alloc / std | m7 | US7 | T113 | `c23_core_alloc_std` | `alloc/src/lib.rs`、`std/src/lib.rs`（re-export） | [criteria/c23.md](criteria/c23.md) | compile-time | planned |
@@ -67,7 +67,7 @@ planned → in-progress → experiment-passed → accepted
 | m2 | US2 | P2 | C-05…C-07 | m1 | **passed** | **accepted** | 否 |
 | m3 | US3 | P2 | C-08…C-11 | m2 | **passed** | **accepted** | 否 |
 | m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | **passed** | **accepted** | 否 |
-| m5 | US5 | P1 | C-15…C-20 | m4 | pending | pending | **是** |
+| m5 | US5 | P1 | C-15…C-20 | m4 | **passed** | **accepted** | **是** |
 | m6 | US6 | P2 | C-21 | m5 | pending | pending | 否 |
 | m7 | US7 | P1 | C-22…C-24 | m6 | pending | pending | **是** |
 | m8 | US8 | P3 | 综合（C-01…C-24 全部） | m1–m7 全部通过 | pending | pending | 否 |
@@ -77,7 +77,7 @@ planned → in-progress → experiment-passed → accepted
 | 硬前置模块 | 状态 | 达成日期 | 依据 |
 |-----------|------|---------|------|
 | **m1**（C-01…C-04） | ✅ **已满足** | 2026-09-04 | `cargo test -p m1-ownership` 33 项全绿；`criteria/c01…c04.md` 四项 `pass`；`feynman/m1-ownership.md` 五项检验全 `pass` |
-| m5（C-15…C-20） | 未开始 | — | — |
+| **m5**（C-15…C-20） | ✅ **已满足** | 2026-09-08 | `cargo test -p m5-unsafe` 全绿；两轮 Miri（SB / TB）全绿；`criteria/c15…c20.md` 六项 `pass`；`feynman/m5-unsafe.md` 五项检验全 `pass`；SAFETY 审计覆盖率 100% |
 | m7（C-22…C-24） | 未开始 | — | — |
 
 > **FR-011a 提醒**：三个硬前置是 Feature 002 的**必要**条件，不是充分条件。

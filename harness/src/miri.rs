@@ -28,6 +28,15 @@ use std::process::Command;
 ///
 /// 跳过时 `ub_verdict` MUST 记 `n/a`。
 pub fn run_example(name: &str) -> MiriOutcome {
+    run_example_with_miriflags(name, None)
+}
+
+/// 与 [`run_example`] 相同，但可以为子进程单独设置 `MIRIFLAGS`。
+///
+/// `None` 会**去掉**子进程的 `MIRIFLAGS`，避免父进程（例如
+/// `MIRIFLAGS="-Zmiri-tree-borrows" cargo test`）把别名模型泄漏进
+/// 本应跑默认 Stacked Borrows 的那一轮。C-19 的两轮对照依赖这个隔离。
+pub fn run_example_with_miriflags(name: &str, miriflags: Option<&str>) -> MiriOutcome {
     if cfg!(miri) {
         return MiriOutcome::skipped_because("本进程已在 Miri 下运行，Miri 不支持子进程");
     }
@@ -43,15 +52,23 @@ pub fn run_example(name: &str) -> MiriOutcome {
             .expect("CARGO_MANIFEST_DIR 未设置：本函数只应在 cargo 驱动的测试中调用"),
     );
 
-    let output = Command::new("cargo")
-        .arg("+nightly")
+    let mut cmd = Command::new("cargo");
+    cmd.arg("+nightly")
         .arg("miri")
         .arg("run")
         .arg("--example")
         .arg(name)
-        .current_dir(&manifest)
-        // 让子进程继承干净的标志：MIRIFLAGS 由调用方（tools/run-miri.sh 或测试）显式设置，
-        // 这里不擅自追加，否则 OBSERVATIONS 里记录的命令与实际执行的不一致。
+        .current_dir(&manifest);
+    match miriflags {
+        Some(flags) => {
+            cmd.env("MIRIFLAGS", flags);
+        }
+        None => {
+            cmd.env_remove("MIRIFLAGS");
+        }
+    }
+
+    let output = cmd
         .output()
         .unwrap_or_else(|e| panic!("无法启动 cargo miri：{e}"));
 

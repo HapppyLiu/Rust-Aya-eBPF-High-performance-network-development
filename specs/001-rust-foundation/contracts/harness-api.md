@@ -120,6 +120,10 @@ pub fn measure<R>(f: impl FnOnce() -> R) -> (R, AllocStats);
 /// （此时 ub_verdict 记为 `n/a`，MUST NOT 记为 `clean`）。
 pub fn run_example(name: &str) -> MiriOutcome;
 
+/// 与 `run_example` 相同，但 `miriflags` 只作用于该子进程。
+/// `None` 会去掉子进程的 `MIRIFLAGS`（默认 Stacked Borrows）。
+pub fn run_example_with_miriflags(name: &str, miriflags: Option<&str>) -> MiriOutcome;
+
 pub struct MiriOutcome { /* ... */ }
 
 impl MiriOutcome {
