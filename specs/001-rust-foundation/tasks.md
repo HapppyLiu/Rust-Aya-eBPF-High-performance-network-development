@@ -262,19 +262,19 @@ Send/Sync 判定题集。
 **Independent Test**: `cargo test -p m6-ffi` 全绿（双向调用成功 + 两侧布局断言一致）+
 `tools/run-asan.sh m6-ffi` 无报告（SC-008）。
 
-- [ ] T096 [US6] 创建 `experiments/m6-ffi/Cargo.toml`：**唯一允许外部依赖的 crate** —— `libc`（dependency）与 `cc`（build-dependency），并在 `src/lib.rs` 声明 `pub mod c21;`（R-08，作用域严格限定于本 crate）
-- [ ] T097 [US6] 编写 `experiments/m6-ffi/c/roundtrip.c` 与 `build.rs`：C 侧提供被 Rust 调用的函数、并调用由 Rust 导出的 `#[unsafe(no_mangle)] extern "C"` 函数；`build.rs` 用 `cc` 编译并链接
-- [ ] T098 [US6] 编写 `learning/m6-ffi/concept.md`（C-21 四要素；MUST 回答"为何默认布局不可依赖"与"需要何种约束才能保证两侧一致"，US6 AS1；FR-014 写明与 Aya 用户态 syscall 交互的关联）
-- [ ] T099 [P] [US6] 编写 `learning/m6-ffi/source-refs.md`：`core/src/ffi/mod.rs`（`c_int`/`c_char`）、`std/src/ffi/c_str.rs`（`CStr`），含行号与"这段源码回答了什么"
-- [ ] T100 [P] [US6] C-21 布局一致性实验：`examples/c21_ffi_layout.rs` + `tests/c21_ffi_layout.rs`——Rust 侧 `#[repr(C)]` 结构体与 C 侧同名结构体的 `size_of`/`align_of`/`offset_of` **双侧**断言（C 侧数值由导出函数返回后比对），MUST NOT 以"声明了 `repr(C)`"即认定一致（CHK043）
-- [ ] T101 [P] [US6] C-21 双向调用实验：`examples/c21_ffi.rs` + `tests/c21_ffi.rs`——Rust→C 与 C→Rust 两个方向**各自**的断言与通过判据分别成立（CHK042）；每个 unsafe 块带五要素 SAFETY
-- [ ] T102 [US6] 跨边界所有权实验：`examples/c21_ffi_ownership.rs` + `tests/c21_ffi_ownership.rs`（一次跨边界分配与释放，断言"哪一侧负责释放"的约定被遵守）；并把"约定不一致会产生何种故障"写入 `learning/m6-ffi/concept.md` 与 OBSERVATIONS 作为可复核产物（US6 AS2 / CHK044）
-- [ ] T103 [US6] Linux 错误码封装实验：`examples/c21_errno.rs` + `tests/c21_errno.rs`——用 `libc::open`/`close` 触发失败，把 `errno` 封装为 Rust 惯用错误类型，断言原始错误信息**未丢失**，并在 concept.md 说明封装层引入的假设（US6 AS3；这也是 Constitution VIII 的最小内核接触点）
-- [ ] T104 [US6] 运行 `tools/run-asan.sh m6-ffi` 取得 `ub_verdict`，并把 T004 登记的假设"ASan 覆盖面窄于 Miri，无报告不等价于无 UB"抄录到 `experiments/m6-ffi/OBSERVATIONS.md` 的判定说明中（R-02 / CHK045）
-- [ ] T105 [US6] 填写 `experiments/m6-ffi/OBSERVATIONS.md`（环境块 MUST 额外含 `libc`/`cc` 的精确版本与 C 编译器版本，data-model §9 `crates`；输出 + 解释 + 架构相关性）
-- [ ] T106 [US6] 编写 `acceptance/criteria/c21.md`（验证命令含 `cargo test -p m6-ffi` 与 `tools/run-asan.sh m6-ffi`；判据含双向调用、双侧布局断言、释放责任说明）
-- [ ] T107 [US6] 编写 `feynman/m6-ffi.md`（五项检验；`Capabilities covered` = C-21）
-- [ ] T108 [US6] 模块验收：`cargo test -p m6-ffi` 全绿 + ASan 无报告 → 更新 capability-matrix 的 C-21 状态与 Task 列
+- [X] T096 [US6] 创建 `experiments/m6-ffi/Cargo.toml`：**唯一允许外部依赖的 crate** —— `libc`（dependency）与 `cc`（build-dependency），并在 `src/lib.rs` 声明 `pub mod c21;`（R-08，作用域严格限定于本 crate）
+- [X] T097 [US6] 编写 `experiments/m6-ffi/c/roundtrip.c` 与 `build.rs`：C 侧提供被 Rust 调用的函数、并调用由 Rust 导出的 `#[unsafe(no_mangle)] extern "C"` 函数；`build.rs` 用 `cc` 编译并链接
+- [X] T098 [US6] 编写 `learning/m6-ffi/concept.md`（C-21 四要素；MUST 回答"为何默认布局不可依赖"与"需要何种约束才能保证两侧一致"，US6 AS1；FR-014 写明与 Aya 用户态 syscall 交互的关联）
+- [X] T099 [P] [US6] 编写 `learning/m6-ffi/source-refs.md`：`core/src/ffi/mod.rs`（`c_int`/`c_char`）、`std/src/ffi/c_str.rs`（`CStr`），含行号与"这段源码回答了什么"
+- [X] T100 [P] [US6] C-21 布局一致性实验：`examples/c21_ffi_layout.rs` + `tests/c21_ffi_layout.rs`——Rust 侧 `#[repr(C)]` 结构体与 C 侧同名结构体的 `size_of`/`align_of`/`offset_of` **双侧**断言（C 侧数值由导出函数返回后比对），MUST NOT 以"声明了 `repr(C)`"即认定一致（CHK043）
+- [X] T101 [P] [US6] C-21 双向调用实验：`examples/c21_ffi.rs` + `tests/c21_ffi.rs`——Rust→C 与 C→Rust 两个方向**各自**的断言与通过判据分别成立（CHK042）；每个 unsafe 块带五要素 SAFETY
+- [X] T102 [US6] 跨边界所有权实验：`examples/c21_ffi_ownership.rs` + `tests/c21_ffi_ownership.rs`（一次跨边界分配与释放，断言"哪一侧负责释放"的约定被遵守）；并把"约定不一致会产生何种故障"写入 `learning/m6-ffi/concept.md` 与 OBSERVATIONS 作为可复核产物（US6 AS2 / CHK044）
+- [X] T103 [US6] Linux 错误码封装实验：`examples/c21_errno.rs` + `tests/c21_errno.rs`——用 `libc::open`/`close` 触发失败，把 `errno` 封装为 Rust 惯用错误类型，断言原始错误信息**未丢失**，并在 concept.md 说明封装层引入的假设（US6 AS3；这也是 Constitution VIII 的最小内核接触点）
+- [X] T104 [US6] 运行 `tools/run-asan.sh m6-ffi` 取得 `ub_verdict`，并把 T004 登记的假设"ASan 覆盖面窄于 Miri，无报告不等价于无 UB"抄录到 `experiments/m6-ffi/OBSERVATIONS.md` 的判定说明中（R-02 / CHK045）
+- [X] T105 [US6] 填写 `experiments/m6-ffi/OBSERVATIONS.md`（环境块 MUST 额外含 `libc`/`cc` 的精确版本与 C 编译器版本，data-model §9 `crates`；输出 + 解释 + 架构相关性）
+- [X] T106 [US6] 编写 `acceptance/criteria/c21.md`（验证命令含 `cargo test -p m6-ffi` 与 `tools/run-asan.sh m6-ffi`；判据含双向调用、双侧布局断言、释放责任说明）
+- [X] T107 [US6] 编写 `feynman/m6-ffi.md`（五项检验；`Capabilities covered` = C-21）
+- [X] T108 [US6] 模块验收：`cargo test -p m6-ffi` 全绿 + ASan 无报告 → 更新 capability-matrix 的 C-21 状态与 Task 列
 
 **Checkpoint**: m6 完成 —— US7 可以开始。
 
@@ -490,7 +490,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - [X] T155 [US3] 创建 `learner/m3-composition/{guide,predictions,selfcheck}.md`：覆盖 C-08…C-11；预测项以**分配次数**为核心（US3 AS1），MUST NOT 写出任何实测次数
 - [X] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
 - [X] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
-- [ ] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
+- [X] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
 - [ ] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
 - [ ] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表
 

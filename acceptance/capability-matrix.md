@@ -52,7 +52,7 @@ planned → in-progress → experiment-passed → accepted
 | C-18 | Alignment | m5 | US5 | T083, T084 | `c18_alignment` | `core/src/mem/mod.rs:540` `align_of`；`core/src/ptr/mod.rs:1810` `read_unaligned` | [criteria/c18.md](criteria/c18.md) | miri | **accepted** |
 | C-19 | Aliasing | m5 | US5 | T085, T086 | `c19_aliasing` | `core/src/cell.rs:2323/2328/2443` `UnsafeCell`/`!Sync`/`get` | [criteria/c19.md](criteria/c19.md) | miri（SB + TB 对照） | **accepted** |
 | C-20 | Memory safety | m5 | US5 | T087, T088, T090 | `c20_mem_safety` | `core/src/slice/raw.rs:124` `from_raw_parts`；`alloc/src/vec/mod.rs:2224` `set_len` | [criteria/c20.md](criteria/c20.md) | miri | **accepted** |
-| C-21 | FFI | m6 | US6 | T100, T101, T102, T103 | `c21_ffi` | `core/src/ffi/mod.rs` `c_int`/`c_char`、`std/src/ffi/c_str.rs` `CStr` | [criteria/c21.md](criteria/c21.md) | asan | planned |
+| C-21 | FFI | m6 | US6 | T100, T101, T102, T103, T104 | `c21_ffi` / `c21_ffi_layout` / `c21_ffi_ownership` / `c21_errno` | `core/src/ffi/mod.rs:36-38` `c_int`/`c_char`；`primitives.rs:21/28/131-133/184`；`std/src/ffi/c_str.rs:10` `CStr`；`core/src/ffi/c_str.rs:254` `from_ptr` | [criteria/c21.md](criteria/c21.md) | asan | **accepted** |
 | C-22 | no_std | m7 | US7 | T112 | `c22_nostd` | `core/src/lib.rs` `#![no_std]`、`std/src/lib.rs` | [criteria/c22.md](criteria/c22.md) | compile-time | planned |
 | C-23 | core / alloc / std | m7 | US7 | T113 | `c23_core_alloc_std` | `alloc/src/lib.rs`、`std/src/lib.rs`（re-export） | [criteria/c23.md](criteria/c23.md) | compile-time | planned |
 | C-24 | Panic and allocator fundamentals | m7 | US7 | T114, T117 | `c24_panic_alloc` | `core/src/panicking.rs`、`core/src/alloc/global.rs` `GlobalAlloc` | [criteria/c24.md](criteria/c24.md) | compile-time + miri（host 侧 allocator） | planned |
@@ -68,7 +68,7 @@ planned → in-progress → experiment-passed → accepted
 | m3 | US3 | P2 | C-08…C-11 | m2 | **passed** | **accepted** | 否 |
 | m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | **passed** | **accepted** | 否 |
 | m5 | US5 | P1 | C-15…C-20 | m4 | **passed** | **accepted** | **是** |
-| m6 | US6 | P2 | C-21 | m5 | pending | pending | 否 |
+| m6 | US6 | P2 | C-21 | m5 | **passed** | **accepted** | 否 |
 | m7 | US7 | P1 | C-22…C-24 | m6 | pending | pending | **是** |
 | m8 | US8 | P3 | 综合（C-01…C-24 全部） | m1–m7 全部通过 | pending | pending | 否 |
 
