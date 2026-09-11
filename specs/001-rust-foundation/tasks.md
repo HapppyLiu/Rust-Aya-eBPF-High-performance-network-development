@@ -288,19 +288,19 @@ panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-
 **Independent Test**: `cd experiments/m7-nostd && cargo build` 成功（"可运行"= **构建成功**，见 T003
 的裁定）；且对三步递进过程中的**每一条**编译错误都能正确归属到 core / alloc / OS services（SC-006）。
 
-- [ ] T109 [US7] 创建 `experiments/m7-nostd/`（**独立于根 workspace**，由 T006 的 `exclude` 保证）：`Cargo.toml`（`panic = "abort"`）、`.cargo/config.toml`（`target = "x86_64-unknown-none"`）、`src/main.rs`（`#![no_std]` `#![no_main]` + `#[panic_handler]`）（R-03）
-- [ ] T110 [US7] 编写 `learning/m7-nostd/concept.md`（C-22…C-24 四要素；MUST 逐一定义 core / alloc / std / allocator / panic / runtime / OS services **七类边界**，使"归属哪一层"无二义（CHK039）；MUST NOT 把 `#![no_std]` 表述为"不能使用标准库"（FR-009）；FR-014 写明与 eBPF 受限环境的对应）
-- [ ] T111 [P] [US7] 编写 `learning/m7-nostd/source-refs.md`：C-22 `core/src/lib.rs`（`#![no_std]`）+ `std/src/lib.rs`；C-23 `alloc/src/lib.rs` + `std/src/lib.rs` 的 re-export 关系；C-24 `core/src/panicking.rs`、`core/src/alloc/global.rs` `GlobalAlloc`、`alloc/src/alloc.rs`
-- [ ] T112 [P] [US7] C-22 实验：`experiments/m7-nostd/src/c22_nostd.rs` + 构建脚本入口，断言载体为**编译期**（`const` 断言 / `compile_error!` 对照 / 构建退出码）与静态检查，按 T003 认定为合法稳定断言（CHK041）
-- [ ] T113 [P] [US7] C-23 实验：`experiments/m7-nostd/src/c23_core_alloc_std.rs`——同一段逻辑分别只用 `core`、加 `alloc`、加 `std` 三个版本，记录各自在裸机 target 上的构建结果与失败归属（US7 AS1）
-- [ ] T114 [P] [US7] C-24 实验：`experiments/m7-nostd/src/c24_panic_alloc.rs`——最小 `#[panic_handler]` 实现 + 自己实现的 `#[global_allocator]`（静态数组 bump allocator），使 `extern crate alloc` 的 `Vec` 可用；说明"分配能力由谁提供"以及该前提在 eBPF 环境是否成立（US7 AS2/AS3）
-- [ ] T115 [US7] 三步递进错误归属实验：按 quickstart §6 依次（1）移除 `#[panic_handler]`（2）引入一个 std 类型（3）在无 allocator 时使用 `Vec`，每步构建并把**每一条**错误逐条归属到 core / alloc / OS services，记入 `experiments/m7-nostd/OBSERVATIONS.md`；错误清单按 T003 定稿为固定可枚举集合（SC-006 / CHK037/CHK038）
-- [ ] T116 [US7] 产物静态检查：`nm target/x86_64-unknown-none/debug/m7-nostd` 与 `readelf -h`，断言/记录关键符号与节区（无 `__libc_start_main`、无 `eh_personality` 等），把可判定项写成脚本 `tools/check-nostd-artifact.sh` 以获得退出码判据（R-04 阶梯 6 / §D2）
-- [ ] T117 [US7] host 侧分配器校验：在 `harness` 或 m3 的 host target 上用 `cargo +nightly miri test` 校验 C-24 自实现 `GlobalAlloc` 的 unsafe 实现（裸机产物无法跑 Miri，故在 host 侧取得 `ub_verdict`），结果记入 OBSERVATIONS（plan Gate Matrix C-24 的 "Miri（host 侧 allocator）"）
-- [ ] T118 [US7] 填写 `experiments/m7-nostd/OBSERVATIONS.md`（环境块 MUST 含 `target = x86_64-unknown-none` + 三步递进的完整错误抄录 + 每条归属解释 + 架构相关性）
-- [ ] T119 [US7] 编写 `acceptance/criteria/c22.md`、`c23.md`、`c24.md`（验证命令为 `cd experiments/m7-nostd && cargo build` 与 `tools/check-nostd-artifact.sh`；判据含"每条错误的归属正确率 100%"与"'不能用标准库'式笼统归因判为未通过"）
-- [ ] T120 [US7] 编写 `feynman/m7-nostd.md`（五项检验；第 4 节 MUST 收录"`no_std` = 不能用标准库"这一误区及其证据）
-- [ ] T121 [US7] 模块验收：`cd experiments/m7-nostd && cargo build` 成功 + `tools/check-nostd-artifact.sh` 退出码 0 + 三步归属正确率 100% → 更新 `acceptance/capability-matrix.md` 中 C-22…C-24 的状态与 Task 列，并标记 m7 为 **FR-012 硬前置已满足**
+- [X] T109 [US7] 创建 `experiments/m7-nostd/`（**独立于根 workspace**，由 T006 的 `exclude` 保证）：`Cargo.toml`（`panic = "abort"`）、`.cargo/config.toml`（`target = "x86_64-unknown-none"`）、`src/main.rs`（`#![no_std]` `#![no_main]` + `#[panic_handler]`）（R-03）
+- [X] T110 [US7] 编写 `learning/m7-nostd/concept.md`（C-22…C-24 四要素；MUST 逐一定义 core / alloc / std / allocator / panic / runtime / OS services **七类边界**，使"归属哪一层"无二义（CHK039）；MUST NOT 把 `#![no_std]` 表述为"不能使用标准库"（FR-009）；FR-014 写明与 eBPF 受限环境的对应）
+- [X] T111 [P] [US7] 编写 `learning/m7-nostd/source-refs.md`：C-22 `core/src/lib.rs`（`#![no_std]`）+ `std/src/lib.rs`；C-23 `alloc/src/lib.rs` + `std/src/lib.rs` 的 re-export 关系；C-24 `core/src/panicking.rs`、`core/src/alloc/global.rs` `GlobalAlloc`、`alloc/src/alloc.rs`
+- [X] T112 [P] [US7] C-22 实验：`experiments/m7-nostd/src/c22_nostd.rs` + 构建脚本入口，断言载体为**编译期**（`const` 断言 / `compile_error!` 对照 / 构建退出码）与静态检查，按 T003 认定为合法稳定断言（CHK041）
+- [X] T113 [P] [US7] C-23 实验：`experiments/m7-nostd/src/c23_core_alloc_std.rs`——同一段逻辑分别只用 `core`、加 `alloc`、加 `std` 三个版本，记录各自在裸机 target 上的构建结果与失败归属（US7 AS1）
+- [X] T114 [P] [US7] C-24 实验：`experiments/m7-nostd/src/c24_panic_alloc.rs`——最小 `#[panic_handler]` 实现 + 自己实现的 `#[global_allocator]`（静态数组 bump allocator），使 `extern crate alloc` 的 `Vec` 可用；说明"分配能力由谁提供"以及该前提在 eBPF 环境是否成立（US7 AS2/AS3）
+- [X] T115 [US7] 三步递进错误归属实验：按 quickstart §6 依次（1）移除 `#[panic_handler]`（2）引入一个 std 类型（3）在无 allocator 时使用 `Vec`，每步构建并把**每一条**错误逐条归属到 core / alloc / OS services，记入 `experiments/m7-nostd/OBSERVATIONS.md`；错误清单按 T003 定稿为固定可枚举集合（SC-006 / CHK037/CHK038）
+- [X] T116 [US7] 产物静态检查：`nm target/x86_64-unknown-none/debug/m7-nostd` 与 `readelf -h`，断言/记录关键符号与节区（无 `__libc_start_main`、无 `eh_personality` 等），把可判定项写成脚本 `tools/check-nostd-artifact.sh` 以获得退出码判据（R-04 阶梯 6 / §D2）
+- [X] T117 [US7] host 侧分配器校验：在 `harness` 或 m3 的 host target 上用 `cargo +nightly miri test` 校验 C-24 自实现 `GlobalAlloc` 的 unsafe 实现（裸机产物无法跑 Miri，故在 host 侧取得 `ub_verdict`），结果记入 OBSERVATIONS（plan Gate Matrix C-24 的 "Miri（host 侧 allocator）"）
+- [X] T118 [US7] 填写 `experiments/m7-nostd/OBSERVATIONS.md`（环境块 MUST 含 `target = x86_64-unknown-none` + 三步递进的完整错误抄录 + 每条归属解释 + 架构相关性）
+- [X] T119 [US7] 编写 `acceptance/criteria/c22.md`、`c23.md`、`c24.md`（验证命令为 `cd experiments/m7-nostd && cargo build` 与 `tools/check-nostd-artifact.sh`；判据含"每条错误的归属正确率 100%"与"'不能用标准库'式笼统归因判为未通过"）
+- [X] T120 [US7] 编写 `feynman/m7-nostd.md`（五项检验；第 4 节 MUST 收录"`no_std` = 不能用标准库"这一误区及其证据）
+- [X] T121 [US7] 模块验收：`cd experiments/m7-nostd && cargo build` 成功 + `tools/check-nostd-artifact.sh` 退出码 0 + 三步归属正确率 100% → 更新 `acceptance/capability-matrix.md` 中 C-22…C-24 的状态与 Task 列，并标记 m7 为 **FR-012 硬前置已满足**
 
 **Checkpoint**: m1/m5/m7 三个硬前置全部完成 —— US8 可以开始。
 
@@ -491,7 +491,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - [X] T156 [US4] 创建 `learner/m4-concurrency/{guide,predictions,selfcheck}.md`：覆盖 C-12…C-14；MUST 与 `acceptance/send-sync-quiz.md` 交叉引用但 MUST NOT 复述题目答案；预测项含 Send/Sync 判定、放宽内存序后哪些顺序变为可能
 - [X] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
 - [X] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
-- [ ] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
+- [X] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
 - [ ] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表
 
 ### 归属 Phase 11（Polish）

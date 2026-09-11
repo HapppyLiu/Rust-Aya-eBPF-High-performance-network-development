@@ -1,0 +1,27 @@
+[package]
+name = "m7-nostd"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "US7 / C-22..C-24：no_std、core/alloc/std 边界、panic 与分配器（独立于根 workspace）"
+
+# 裸机 target 没有 unwind 运行时。abort 让默认构建不需要 eh_personality（SC-006 步骤 1 构造 B 会故意关掉它）。
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+# 本 crate 不在 workspace 内，lint 必须在此重复根 Cargo.toml 的门禁（experiment-contract §C6.4）。
+[lints.clippy]
+undocumented_unsafe_blocks = "deny"
+multiple_unsafe_ops_per_block = "deny"
+
+# 探测 feature：每次只开一个，由 tools/m7-probe-errors.sh 驱动。默认构建 MUST 不启用它们。
+[features]
+default = []
+probe-no-panic-handler = []
+probe-std-type = []
+probe-std-crate = []
+probe-vec-no-alloc-crate = []
+probe-vec-no-global-alloc = []

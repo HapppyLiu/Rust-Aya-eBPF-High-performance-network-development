@@ -177,24 +177,23 @@ cd experiments/m7-nostd
 cargo build                       # target 由 .cargo/config.toml 固定为 x86_64-unknown-none
 ```
 
-**递进式验收**（US7 AS1–AS3）：
+**递进式验收**（US7 AS1–AS3 / SC-006 固定 6 条）：
 
 ```bash
-# 1) 先临时移除 #[panic_handler]，编译，记录错误 → 归属：OS services / 语言 item
-# 2) 再临时引入一个 std 类型，编译，记录错误 → 归属：std
-# 3) 再尝试使用 Vec，编译，记录错误 → 归属：alloc（需 extern crate alloc + GlobalAlloc）
-# 每恢复一步都重新构建，逐条记录到 OBSERVATIONS.md
+tools/m7-probe-errors.sh          # 1a/1b/2a/2b/3a/3b 每步单独构建
+# 清单与归属见 spec.md SC-006（1.98.0 上 1b/3b 的诊断已按实测修订，分母仍为 6）
 ```
 
-**通过判据**（SC-006）：对构建过程中出现的**每一条**错误，都能说明缺失能力属于
-`core` / `alloc` / `OS services` 中的哪一层，正确率 100%。
+每条错误的完整抄录与归属解释记入 `experiments/m7-nostd/OBSERVATIONS.md`。
+
+**通过判据**（SC-006）：对固定清单的**每一条**错误，都能说明缺失能力属于
+七类边界中的哪一层，正确率 100%。
 "不能用标准库"这种笼统归因 MUST 判为未通过（FR-009）。
 
 产物静态检查：
 
 ```bash
-nm      target/x86_64-unknown-none/debug/m7-nostd | head
-readelf -h target/x86_64-unknown-none/debug/m7-nostd
+tools/check-nostd-artifact.sh     # 内含 cargo build + nm/readelf 退出码判据
 ```
 
 ---

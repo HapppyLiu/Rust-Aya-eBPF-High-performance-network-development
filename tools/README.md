@@ -10,6 +10,7 @@
 | `run-miri.sh` | 统一 `MIRIFLAGS` 的 UB 判定入口 | R-02 / FR-019 |
 | `run-asan.sh` | FFI 场景的 UB 判定入口（Miri 不支持真实 C 调用） | R-02 / §C5.4 |
 | `check-nostd-artifact.sh` | `no_std` 产物的符号与节区静态检查（退出码判据） | R-04 阶梯 6 / §D2 |
+| `m7-probe-errors.sh` | SC-006 三步递进六条探测（每步单独构建，核对稳定子串） | spec.md SC-006 / T115 |
 
 **约定**：所有脚本从仓库根目录执行，接受 `-h` 打印用法，用退出码表达判定结果
 （0 = 通过 / 非 0 = 未通过），使它们可以直接作为 `acceptance/criteria/` 的退出码判据。

@@ -53,9 +53,9 @@ planned → in-progress → experiment-passed → accepted
 | C-19 | Aliasing | m5 | US5 | T085, T086 | `c19_aliasing` | `core/src/cell.rs:2323/2328/2443` `UnsafeCell`/`!Sync`/`get` | [criteria/c19.md](criteria/c19.md) | miri（SB + TB 对照） | **accepted** |
 | C-20 | Memory safety | m5 | US5 | T087, T088, T090 | `c20_mem_safety` | `core/src/slice/raw.rs:124` `from_raw_parts`；`alloc/src/vec/mod.rs:2224` `set_len` | [criteria/c20.md](criteria/c20.md) | miri | **accepted** |
 | C-21 | FFI | m6 | US6 | T100, T101, T102, T103, T104 | `c21_ffi` / `c21_ffi_layout` / `c21_ffi_ownership` / `c21_errno` | `core/src/ffi/mod.rs:36-38` `c_int`/`c_char`；`primitives.rs:21/28/131-133/184`；`std/src/ffi/c_str.rs:10` `CStr`；`core/src/ffi/c_str.rs:254` `from_ptr` | [criteria/c21.md](criteria/c21.md) | asan | **accepted** |
-| C-22 | no_std | m7 | US7 | T112 | `c22_nostd` | `core/src/lib.rs` `#![no_std]`、`std/src/lib.rs` | [criteria/c22.md](criteria/c22.md) | compile-time | planned |
-| C-23 | core / alloc / std | m7 | US7 | T113 | `c23_core_alloc_std` | `alloc/src/lib.rs`、`std/src/lib.rs`（re-export） | [criteria/c23.md](criteria/c23.md) | compile-time | planned |
-| C-24 | Panic and allocator fundamentals | m7 | US7 | T114, T117 | `c24_panic_alloc` | `core/src/panicking.rs`、`core/src/alloc/global.rs` `GlobalAlloc` | [criteria/c24.md](criteria/c24.md) | compile-time + miri（host 侧 allocator） | planned |
+| C-22 | no_std | m7 | US7 | T112, T116 | `c22_nostd` | `core/src/lib.rs:12-14,37-44,64` `#![no_core]`；`std/src/lib.rs:236-237` `#![no_std]` | [criteria/c22.md](criteria/c22.md) | compile-time | **accepted** |
+| C-23 | core / alloc / std | m7 | US7 | T113 | `c23_core_alloc_std` | `alloc/src/lib.rs:6-9,74-75`；`std/src/lib.rs:464,607` `vec` re-export | [criteria/c23.md](criteria/c23.md) | compile-time | **accepted** |
+| C-24 | Panic and allocator fundamentals | m7 | US7 | T114, T117 | `c24_panic_alloc` | `core/src/panicking.rs:10-22,67-69`；`core/src/alloc/global.rs:144,178` `GlobalAlloc`；`alloc/src/alloc.rs:12-22,530-532` | [criteria/c24.md](criteria/c24.md) | compile-time + miri（host 侧 allocator） | **accepted** |
 
 **行数校验**：24 行，C-01…C-24 无遗漏、无重复、无无归属项（FR-001 / 规则 E1）。
 
@@ -69,7 +69,7 @@ planned → in-progress → experiment-passed → accepted
 | m4 | US4 | P2 | C-12…C-14 | m3 + T024 题集冻结 | **passed** | **accepted** | 否 |
 | m5 | US5 | P1 | C-15…C-20 | m4 | **passed** | **accepted** | **是** |
 | m6 | US6 | P2 | C-21 | m5 | **passed** | **accepted** | 否 |
-| m7 | US7 | P1 | C-22…C-24 | m6 | pending | pending | **是** |
+| m7 | US7 | P1 | C-22…C-24 | m6 | **passed** | **accepted** | **是** |
 | m8 | US8 | P3 | 综合（C-01…C-24 全部） | m1–m7 全部通过 | pending | pending | 否 |
 
 ### FR-012 硬前置进度
@@ -78,7 +78,7 @@ planned → in-progress → experiment-passed → accepted
 |-----------|------|---------|------|
 | **m1**（C-01…C-04） | ✅ **已满足** | 2026-09-04 | `cargo test -p m1-ownership` 33 项全绿；`criteria/c01…c04.md` 四项 `pass`；`feynman/m1-ownership.md` 五项检验全 `pass` |
 | **m5**（C-15…C-20） | ✅ **已满足** | 2026-09-08 | `cargo test -p m5-unsafe` 全绿；两轮 Miri（SB / TB）全绿；`criteria/c15…c20.md` 六项 `pass`；`feynman/m5-unsafe.md` 五项检验全 `pass`；SAFETY 审计覆盖率 100% |
-| m7（C-22…C-24） | 未开始 | — | — |
+| m7（C-22…C-24） | ✅ **已满足** | 2026-09-11 | `cd experiments/m7-nostd && cargo build` 成功；`tools/check-nostd-artifact.sh` 与 `tools/m7-probe-errors.sh` 退出码 0；host Miri `c24_bump_alloc` 3 项 clean；`criteria/c22…c24.md` 三项 `pass`；`feynman/m7-nostd.md` 五项检验全 `pass` |
 
 > **FR-011a 提醒**：三个硬前置是 Feature 002 的**必要**条件，不是充分条件。
 > US2/US3/US4/US6 任一未通过时 MUST NOT 启动 Feature 002 —— 硬前置模块本身的验收

@@ -427,14 +427,24 @@ Build 环节，也是进入 Feature 002 的准入检查。它必须在其他 Sto
   | 步骤 | 构造 | 应归属层 | 计入分母的条目 |
   |------|-----|---------|--------------|
   | 1 | 移除 `#[panic_handler]` | OS services / runtime | `#[panic_handler]` 函数缺失 |
-  | 1 | 同上（`panic = "abort"` 未设时） | runtime | 语言项 `eh_personality` 缺失 |
-  | 2 | 引入一个 `std` 专属类型 | OS services | 该类型在 `core` 中不存在（未解析的导入） |
-  | 2 | 同上 | OS services | 未找到 crate `std`（裸机 target 无 std） |
+  | 1 | `panic = "abort"` 未设（强制 `-C panic=unwind`，保留 handler） | runtime | unwinding 需要 std 提供的展开运行时（见下方 1.98.0 修订） |
+  | 2 | 引入一个 `std` 专属类型（经 `core::fs::File` 探测） | OS services | 该类型在 `core` 中不存在（未解析的导入） |
+  | 2 | 去掉 `#![no_std]`，让 crate 去找 `std` | OS services | 未找到 crate `std`（裸机 target 无 std） |
   | 3 | 无 allocator 时使用 `alloc::vec::Vec` | alloc | 未找到 crate `alloc`（未 `extern crate alloc`） |
-  | 3 | 已引入 `alloc` 但无 `#[global_allocator]` | allocator | 语言项 `alloc_error_handler` / 全局分配器缺失 |
+  | 3 | 已引入 `alloc` 但无 `#[global_allocator]` | allocator | 全局分配器缺失（见下方 1.98.0 修订） |
 
   **分母 = 6**（该清单在 T003 定稿，实施时若发现某条在 pinned 工具链上不复现，MUST 修订本表
   并说明理由，MUST NOT 静默调整分母）。**正确率 = 归属正确的条目数 / 6，通过线 = 100%**。
+
+  **1.98.0 + `x86_64-unknown-none` 修订理由**（US7 实施时核实，分母未改）：
+
+  1. 步骤 1 第二条：该 target 的默认 panic 策略是 abort；强制 `-C panic=unwind` 时
+     rustc 给出 `unwinding panics are not supported without std`，**不会**再单独索要
+     `eh_personality` 语言项。计入分母的条目改为这条诊断所代表的**展开运行时**，
+     归属仍为 runtime（展开人格 / unwinder 由 std / panic_unwind 供给，裸机没有）。
+  2. 步骤 3 第二条：1.98.0 在已有 `#[panic_handler]` 时不再强制 `#[alloc_error_handler]`
+     （OOM 默认走 panic）。无 `#[global_allocator]` 时的稳定诊断是
+     `no global memory allocator found but one is required`。计入分母的是**全局分配器缺失**。
 
   **判为未通过的归因形式**：`no_std 就是不能用标准库`、`缺库`、`环境问题` 一类笼统表述
   （FR-009 明确禁止），即使该条目的层次标签碰巧写对也计为错误 —— 本判据检验的是能否

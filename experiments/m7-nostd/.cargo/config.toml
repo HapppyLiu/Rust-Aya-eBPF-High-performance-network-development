@@ -1,0 +1,4 @@
+# m7-nostd 被根 workspace exclude（research.md R-03）。
+# 本文件把构建 target 钉死，避免有人在 host 上误编 #![no_main] crate。
+[build]
+target = "x86_64-unknown-none"
