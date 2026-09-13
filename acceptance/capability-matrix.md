@@ -70,7 +70,11 @@ planned → in-progress → experiment-passed → accepted
 | m5 | US5 | P1 | C-15…C-20 | m4 | **passed** | **accepted** | **是** |
 | m6 | US6 | P2 | C-21 | m5 | **passed** | **accepted** | 否 |
 | m7 | US7 | P1 | C-22…C-24 | m6 | **passed** | **accepted** | **是** |
-| m8 | US8 | P3 | 综合（C-01…C-24 全部） | m1–m7 全部通过 | pending | pending | 否 |
+| m8 | US8 | P3 | 综合（C-01…C-24 全部） | m1–m7 全部通过 | **passed** | **accepted** | 否 |
+
+m8 综合实验定位表：[capability-location-map.md](capability-location-map.md)（SC-009，24 行文件+函数，无空行）。
+验收命令：`cargo test -p m8-capstone`（19 项全绿）+ `cargo +nightly miri test -p m8-capstone`（`ub_verdict = clean`）+
+`cargo build -p m8-capstone --no-default-features`。达成日期：2026-09-12。
 
 ### FR-012 硬前置进度
 

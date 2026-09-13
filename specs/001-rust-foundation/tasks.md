@@ -314,22 +314,22 @@ panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-
 **Independent Test**: `cargo test -p m8-capstone` 全绿 + `cargo +nightly miri test -p m8-capstone`
 判定 `clean` + 24 项能力在产物或配套说明中**逐项**定位无遗漏（SC-009）。
 
-- [ ] T122 [US8] 创建 `experiments/m8-capstone/Cargo.toml` 与 `src/lib.rs`：`#![no_std]` + `extern crate alloc`（host target 上可 `cargo test`，`std` 仅在 `#[cfg(test)]` 下启用），声明各分层模块
-- [ ] T123 [US8] 编写 `learning/m8-capstone/concept.md`：综合场景设计（字节缓冲区报文解析器）+ 该场景为何能同时承载七个模块的能力 + 每一分层对应哪些 C-ID
-- [ ] T124 [P] [US8] 编写 `learning/m8-capstone/source-refs.md`：综合实验中借鉴/对照的 core/alloc 源码位置（如 `core/src/slice/iter.rs`、`alloc/src/vec/mod.rs`）
-- [ ] T125 [US8] 实现所有权与生命周期分层 `src/buffer.rs`：零拷贝的 `&'a [u8]` 视图类型与生命周期标注，体现 C-01…C-04
-- [ ] T126 [US8] 实现 trait 抽象与泛型分层 `src/parse.rs`：`trait Parse` + 泛型解析组合器 + 一处 trait 对象用法，体现 C-05…C-07
-- [ ] T127 [US8] 实现错误处理/迭代器/智能指针分层 `src/error.rs` 与 `src/iter.rs`：`Result` 错误传播、`Iterator` 实现、`alloc::boxed::Box` 的所有权语义，体现 C-08…C-11
-- [ ] T128 [US8] 实现并发/原子分层 `src/stats.rs`：`AtomicUsize` 解析计数器 + 显式的 `Send`/`Sync` 论证（注释中写明为何成立），体现 C-12…C-14
-- [ ] T129 [US8] 实现 unsafe 解析核心与安全封装 `src/raw.rs`：带边界检查的裸指针偏移读取 + 对外**安全**接口；每个 unsafe 块的 SAFETY 覆盖五要素，体现 C-15…C-20（FR-008 / SC-010）
-- [ ] T130 [US8] 实现 `#[repr(C)]` 报文头 `src/wire.rs`：布局断言 + C-21 在综合实验中的体现（若不做真实 C 调用，则在配套说明中定位并说明理由，SC-009 允许"产物**或配套说明**"）
-- [ ] T131 [US8] 在 `no_std` + `alloc` 约束下组织代码并验证：`cargo build -p m8-capstone --no-default-features`（不启用 std）成功；说明哪些能力因缺少 OS services 而必须换实现，体现 C-22…C-24
-- [ ] T132 [US8] 编写 `experiments/m8-capstone/tests/capstone.rs`（必要时按分层拆为 `tests/parse.rs`、`tests/raw.rs`、`tests/wire.rs`）稳定断言集：解析正确性、错误路径、布局、分配次数（`CountingAllocator`）、`Send`/`Sync` 静态断言；每个 `#[test]` 带 `CLAIM`（FR-015）
-- [ ] T133 [US8] 运行 `cargo +nightly miri test -p m8-capstone` 取得 `ub_verdict = clean`——综合实验的安全抽象必须**真的**安全（quickstart §7）
-- [ ] T134 [US8] 编写 `acceptance/capability-location-map.md`：24 项能力逐项定位到综合实验的**文件 + 函数**（粒度按 T001/CHK010 的裁定），无遗漏项（SC-009）
-- [ ] T135 [US8] 填写 `experiments/m8-capstone/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性）
-- [ ] T136 [US8] 编写 `feynman/m8-capstone.md`（五项检验；MUST 解释"单项能力通过 ≠ 能组合使用"这一模块存在的理由）
-- [ ] T137 [US8] 模块验收：`cargo test -p m8-capstone` 全绿 + Miri `clean` + 24 项定位无遗漏 → 更新 capability-matrix，m8 `status = complete`
+- [X] T122 [US8] 创建 `experiments/m8-capstone/Cargo.toml` 与 `src/lib.rs`：`#![no_std]` + `extern crate alloc`（host target 上可 `cargo test`，`std` 仅在 `#[cfg(test)]` 下启用），声明各分层模块
+- [X] T123 [US8] 编写 `learning/m8-capstone/concept.md`：综合场景设计（字节缓冲区报文解析器）+ 该场景为何能同时承载七个模块的能力 + 每一分层对应哪些 C-ID
+- [X] T124 [P] [US8] 编写 `learning/m8-capstone/source-refs.md`：综合实验中借鉴/对照的 core/alloc 源码位置（如 `core/src/slice/iter.rs`、`alloc/src/vec/mod.rs`）
+- [X] T125 [US8] 实现所有权与生命周期分层 `src/buffer.rs`：零拷贝的 `&'a [u8]` 视图类型与生命周期标注，体现 C-01…C-04
+- [X] T126 [US8] 实现 trait 抽象与泛型分层 `src/parse.rs`：`trait Parse` + 泛型解析组合器 + 一处 trait 对象用法，体现 C-05…C-07
+- [X] T127 [US8] 实现错误处理/迭代器/智能指针分层 `src/error.rs` 与 `src/iter.rs`：`Result` 错误传播、`Iterator` 实现、`alloc::boxed::Box` 的所有权语义，体现 C-08…C-11
+- [X] T128 [US8] 实现并发/原子分层 `src/stats.rs`：`AtomicUsize` 解析计数器 + 显式的 `Send`/`Sync` 论证（注释中写明为何成立），体现 C-12…C-14
+- [X] T129 [US8] 实现 unsafe 解析核心与安全封装 `src/raw.rs`：带边界检查的裸指针偏移读取 + 对外**安全**接口；每个 unsafe 块的 SAFETY 覆盖五要素，体现 C-15…C-20（FR-008 / SC-010）
+- [X] T130 [US8] 实现 `#[repr(C)]` 报文头 `src/wire.rs`：布局断言 + C-21 在综合实验中的体现（若不做真实 C 调用，则在配套说明中定位并说明理由，SC-009 允许"产物**或配套说明**"）
+- [X] T131 [US8] 在 `no_std` + `alloc` 约束下组织代码并验证：`cargo build -p m8-capstone --no-default-features`（不启用 std）成功；说明哪些能力因缺少 OS services 而必须换实现，体现 C-22…C-24
+- [X] T132 [US8] 编写 `experiments/m8-capstone/tests/capstone.rs`（必要时按分层拆为 `tests/parse.rs`、`tests/raw.rs`、`tests/wire.rs`）稳定断言集：解析正确性、错误路径、布局、分配次数（`CountingAllocator`）、`Send`/`Sync` 静态断言；每个 `#[test]` 带 `CLAIM`（FR-015）
+- [X] T133 [US8] 运行 `cargo +nightly miri test -p m8-capstone` 取得 `ub_verdict = clean`——综合实验的安全抽象必须**真的**安全（quickstart §7）
+- [X] T134 [US8] 编写 `acceptance/capability-location-map.md`：24 项能力逐项定位到综合实验的**文件 + 函数**（粒度按 T001/CHK010 的裁定），无遗漏项（SC-009）
+- [X] T135 [US8] 填写 `experiments/m8-capstone/OBSERVATIONS.md`（环境块 + 输出 + 解释 + 架构相关性）
+- [X] T136 [US8] 编写 `feynman/m8-capstone.md`（五项检验；MUST 解释"单项能力通过 ≠ 能组合使用"这一模块存在的理由）
+- [X] T137 [US8] 模块验收：`cargo test -p m8-capstone` 全绿 + Miri `clean` + 24 项定位无遗漏 → 更新 capability-matrix，m8 `status = complete`
 
 **Checkpoint**: 八个模块全部完成 —— 进入终验收。
 
@@ -492,7 +492,7 @@ MIRIFLAGS="-Zmiri-tree-borrows" cargo +nightly miri test -p m5-unsafe
 - [X] T157 [US5] 创建 `learner/m5-unsafe/{guide,predictions,selfcheck}.md`：覆盖 C-15…C-20；预测表 MUST 为 12 个成对实验各留一行 **UB 类别事前预测**（填 W 编号，见 experiment-contract §C5.3），且 MUST NOT 列出白名单文本本身（L3）；提示阶梯 MUST 引导学习者自行写出 SAFETY 五要素而非给出范文
 - [X] T158 [US6] 创建 `learner/m6-ffi/{guide,predictions,selfcheck}.md`：覆盖 C-21；预测项含两侧 `size_of`/`align_of`/`offset_of` 是否一致、`errno` 封装后原始信息是否丢失
 - [X] T159 [US7] 创建 `learner/m7-nostd/{guide,predictions,selfcheck}.md`：覆盖 C-22…C-24；预测表 MUST 为 SC-006 固定清单的 6 条错误各留一行"归属哪一层"的事前预测，MUST NOT 给出归属答案
-- [ ] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表
+- [X] T160 [US8] 创建 `learner/m8-capstone/{guide,predictions,selfcheck}.md`：综合场景的设计问题（不给设计方案）；自检 MUST 含"24 项能力你能各自定位到哪一层"的空白表
 
 ### 归属 Phase 11（Polish）
 

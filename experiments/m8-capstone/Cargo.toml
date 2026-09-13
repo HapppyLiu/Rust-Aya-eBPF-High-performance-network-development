@@ -1,0 +1,20 @@
+[package]
+name = "m8-capstone"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+description = "US8 综合实验：no_std + alloc 字节缓冲区报文解析器（C-01…C-24）"
+
+[features]
+# 库本身始终 `#![no_std]`。`std` feature 故意留空：测试是独立 crate，默认带 std。
+# `cargo build -p m8-capstone --no-default-features` 验证的是"不靠 OS services 也能链上"。
+default = []
+std = []
+
+[dependencies]
+
+[dev-dependencies]
+rf-harness.workspace = true
+
+[lints]
+workspace = true
