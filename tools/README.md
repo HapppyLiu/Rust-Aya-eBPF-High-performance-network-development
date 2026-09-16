@@ -13,7 +13,8 @@
 | `m7-probe-errors.sh` | SC-006 三步递进六条探测（每步单独构建，核对稳定子串） | spec.md SC-006 / T115 |
 
 **约定**：所有脚本从仓库根目录执行，接受 `-h` 打印用法，用退出码表达判定结果
-（0 = 通过 / 非 0 = 未通过），使它们可以直接作为 `acceptance/criteria/` 的退出码判据。
+（0 = 通过 / 非 0 = 未通过），使它们可以直接作为
+`acceptance/001-rust-foundation/criteria/` 的退出码判据。
 
 `env-record.sh` 的输出格式 MUST 与 `rf_harness::env::EnvironmentRecord::to_markdown()`
 逐字一致 —— 两者是同一份环境记录的 shell 与 Rust 实现，`no_std` 构建等不便启动 cargo

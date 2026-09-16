@@ -131,7 +131,7 @@ MUST NOT 使 `ub_verdict` 被置为 `clean`——未运行 UB 工具时该字段
 | `forbidden_content` | — | 断言表达式 MUST NOT 包含：指针地址、`{:p}` 输出、时间测量、线程调度顺序、哈希遍历顺序、进程 PID |
 
 **Enforcement**：断言与观测的分离是**物理的**（`tests/` vs `examples/`），不依赖自律。
-详见 [contracts/experiment-contract.md](./contracts/experiment-contract.md)。
+详见 [contracts/experiment-contract.md](../../contracts/001-rust-foundation/experiment-contract.md)。
 
 ---
 

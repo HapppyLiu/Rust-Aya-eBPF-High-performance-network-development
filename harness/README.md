@@ -2,7 +2,7 @@
 
 本 Feature 唯一的共享设施 crate。**零外部依赖**（只用 `std`）。
 
-契约：[harness-api.md](../specs/001-rust-foundation/contracts/harness-api.md)
+契约：[harness-api.md](../contracts/001-rust-foundation/harness-api.md)
 
 | 模块 | 提供什么 | 服务于 |
 |-----|---------|-------|

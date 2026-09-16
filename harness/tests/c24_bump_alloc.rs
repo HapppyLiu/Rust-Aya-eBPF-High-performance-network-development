@@ -1,13 +1,13 @@
 //! C-24 host 侧：直接调用裸机 crate 的 bump 分配器（T117）。
 //!
-//! 裸机产物无法跑 Miri。本文件把 `experiments/m7-nostd/src/bump.rs` 引进 host 测试，
+//! 裸机产物无法跑 Miri。本文件把 `experiments/001-rust-foundation/m7-nostd/src/bump.rs` 引进 host 测试，
 //! 让 `cargo +nightly miri test -p rf-harness --test c24_bump_alloc` 取得 `ub_verdict`。
 //!
 //! 不把 `BumpAlloc` 注册为本测试 crate 的 `#[global_allocator]`：测试框架自己会分配，
 //! 64KiB 静态 arena 撑不住 harness；也避免与 `harness_selfcheck` 的 CountingAllocator 混淆。
 //! 学习对象仍在 m7，这里只是验证设施入口（harness-api §非目标）。
 
-#[path = "../../experiments/m7-nostd/src/bump.rs"]
+#[path = "../../experiments/001-rust-foundation/m7-nostd/src/bump.rs"]
 mod bump;
 
 use bump::{ARENA_SIZE, BumpAlloc};

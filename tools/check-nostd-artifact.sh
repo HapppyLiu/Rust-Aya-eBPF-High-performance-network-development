@@ -13,7 +13,7 @@ usage() { sed -n '2,${/^#/!q;s/^# \{0,1\}//;p}' "$0"; exit "${1:-0}"; }
 [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && usage 0
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-M7="$ROOT/experiments/m7-nostd"
+M7="$ROOT/experiments/001-rust-foundation/m7-nostd"
 export CARGO_TARGET_DIR="$M7/target"
 BIN="$CARGO_TARGET_DIR/x86_64-unknown-none/debug/m7-nostd"
 

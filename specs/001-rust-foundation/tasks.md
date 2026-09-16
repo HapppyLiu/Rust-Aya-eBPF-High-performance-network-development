@@ -7,7 +7,7 @@ description: "Task list for Rust Foundation (001-rust-foundation)"
 **Input**: Design documents from `/specs/001-rust-foundation/`
 
 **Prerequisites**: [plan.md](./plan.md)、[spec.md](./spec.md)、[research.md](./research.md)、
-[data-model.md](./data-model.md)、[contracts/](./contracts/)、[quickstart.md](./quickstart.md)、
+[data-model.md](./data-model.md)、[contracts/](../../contracts/001-rust-foundation/)、[quickstart.md](./quickstart.md)、
 [checklists/learning-quality.md](./checklists/learning-quality.md)
 
 **Tests**: 本 Feature 的 `tests/` **不是**可选的开发者测试，而是 FR-003 规定的**验收载体**
@@ -24,10 +24,22 @@ description: "Task list for Rust Foundation (001-rust-foundation)"
 
 ## Path Conventions
 
-本 Feature 采用 plan.md §Project Structure 的**四分目录 + 单 workspace**：
-`learning/`（概念与源码引用）、`experiments/`（可执行实验）、`feynman/`（教学材料）、
-`acceptance/`（验收标准），加上 `harness/`（rf-harness 验证设施）与 `tools/`（脚本）。
-`experiments/m7-nostd` 被根 workspace `exclude`（R-03）。
+产物按**类型目录 × Feature 子目录**组织（plan.md §Project Structure）：
+
+| 类型 | 本 Feature 路径 |
+|------|----------------|
+| Spec / Plan / Tasks | `specs/001-rust-foundation/` |
+| Learner Track | `learner/001-rust-foundation/` |
+| Answer Track（概念） | `learning/001-rust-foundation/` |
+| Feynman | `feynman/001-rust-foundation/` |
+| 实验 | `experiments/001-rust-foundation/` |
+| 验收 | `acceptance/001-rust-foundation/` |
+| 契约 | `contracts/001-rust-foundation/` |
+
+仓库根另有共享基础设施：`Cargo.toml`、`harness/`、`tools/`、工具链配置。
+`experiments/001-rust-foundation/m7-nostd` 被根 workspace `exclude`（R-03）。
+文档中的短路径 `mN-<module>` 指各类型目录下本 Feature 子目录中的模块。
+从仓库根执行的命令使用完整前缀，例如 `experiments/001-rust-foundation/`。
 
 外加 **`learner/`（Learner Track 学习者视图）**，见下方 §双轨产物。
 
@@ -69,15 +81,15 @@ workspace 与脚本骨架。
 
 ### 1A. 门禁未决项裁定（阻塞后续所有验收判定）
 
-- [X] T001 [P] 修订 `specs/001-rust-foundation/contracts/experiment-contract.md`：补齐 UB 判定的可判定规则——(a) §C5 增加"Miri 报告 UB 但**类别与事前预测不一致**"时判 fail 并重写预测的规则（CHK027）；(b) §C5.3 给出**允许的错误类别子串白名单**（如 `Undefined Behavior` / `memory access failed` / `attempting a read access` / `not sufficiently aligned` / `alias`），禁止事后任选子串（CHK026）；(c) §C3.2"解释"字段增加内容下限（MUST 回答"为什么会这样"与"这**不能**证明什么"两问，仅复述现象即未完成，CHK017）；(d) §C7.2 明确"可推广性判定"对**全部**实验强制，敏感性由实验作者在 OBSERVATIONS 中给出判定与理由（CHK019）；(e) §C4 增加"同一样本触发多个错误码"时的断言方式（断言集合为子集关系，MUST 列出全部实际错误码）（CHK020）
-- [X] T002 [P] 修订 `specs/001-rust-foundation/contracts/learning-artifact-contract.md`：(a) §C1 明确"模块 Feynman fail → 能力级 AC **可先判 pass**，但 Capability 状态被模块门禁挡在 `experiment-passed`，MUST NOT 进入 `accepted`"（CHK050）；(b) §D2 为不产生可执行产物的目标（§G 限时阅读、§F 推导依据）给出等效客观判据（复核清单逐条勾选 + 复核人签名日期，CHK003）；(c) §C 检验结果表为五项各写一行可判定合格标准，第 5 节明确"≥5 个问题且每题指向一条实验断言或源码引用"（CHK048）；(d) §F5 与 spec SC-007 的通过线统一表述并声明冲突时以哪条为准（CHK034）；(e) §E 表头增加 **Task** 列（值为本文件的 T-ID），使 FR-013 七段链条不缺环（CHK051）；(f) §E3 给出孤立笔记的**可执行枚举方式**（`learning/`+`feynman/` 下全部条目与矩阵 C-ID 比对的具体命令，CHK052/CHK053）
+- [X] T001 [P] 修订 `contracts/001-rust-foundation/experiment-contract.md`：补齐 UB 判定的可判定规则——(a) §C5 增加"Miri 报告 UB 但**类别与事前预测不一致**"时判 fail 并重写预测的规则（CHK027）；(b) §C5.3 给出**允许的错误类别子串白名单**（如 `Undefined Behavior` / `memory access failed` / `attempting a read access` / `not sufficiently aligned` / `alias`），禁止事后任选子串（CHK026）；(c) §C3.2"解释"字段增加内容下限（MUST 回答"为什么会这样"与"这**不能**证明什么"两问，仅复述现象即未完成，CHK017）；(d) §C7.2 明确"可推广性判定"对**全部**实验强制，敏感性由实验作者在 OBSERVATIONS 中给出判定与理由（CHK019）；(e) §C4 增加"同一样本触发多个错误码"时的断言方式（断言集合为子集关系，MUST 列出全部实际错误码）（CHK020）
+- [X] T002 [P] 修订 `contracts/001-rust-foundation/learning-artifact-contract.md`：(a) §C1 明确"模块 Feynman fail → 能力级 AC **可先判 pass**，但 Capability 状态被模块门禁挡在 `experiment-passed`，MUST NOT 进入 `accepted`"（CHK050）；(b) §D2 为不产生可执行产物的目标（§G 限时阅读、§F 推导依据）给出等效客观判据（复核清单逐条勾选 + 复核人签名日期，CHK003）；(c) §C 检验结果表为五项各写一行可判定合格标准，第 5 节明确"≥5 个问题且每题指向一条实验断言或源码引用"（CHK048）；(d) §F5 与 spec SC-007 的通过线统一表述并声明冲突时以哪条为准（CHK034）；(e) §E 表头增加 **Task** 列（值为本文件的 T-ID），使 FR-013 七段链条不缺环（CHK051）；(f) §E3 给出孤立笔记的**可执行枚举方式**（`learning/`+`feynman/` 下全部条目与矩阵 C-ID 比对的具体命令，CHK052/CHK053）
 - [X] T003 修订 `specs/001-rust-foundation/spec.md`：(a) US7 Independent Test 与 SC-006 明确 `no_std` 的"可运行"= **构建成功**（`x86_64-unknown-none` 无 OS，产物不可直接执行，CHK036）；(b) SC-006 的错误集合定义为**固定可枚举清单**（三步递进各自的错误逐条列出，避免编译器只报首错导致分母不确定，CHK038）；(c) SC-002 判定口径补上"`cargo test --workspace` 全绿 **+** `experiments/m7-nostd` 构建成功 + m7 的编译期/静态检查断言复现"（CHK040/CHK041）；(d) FR-011 与 FR-012 的关系明确化：US2/US3/US4/US6 未通过时能否启动 Feature 002 给出唯一答案（CHK058）
 - [X] T004 修订 `specs/001-rust-foundation/spec.md` 与 `plan.md`：(a) 为 US5 AS4"与 eBPF verifier 边界要求建立对应关系"给出在 FR-017 约束下**可产出可验收**的形式（限定为 `learning/m5-unsafe/concept.md` 的"与后续学习的关联"条目 + 边界检查移除对照实验的解释，MUST NOT 编写 eBPF 程序，CHK031）；(b) 将"ASan 覆盖面窄于 Miri，`ASan 无报告` 不等价于 `无 UB`"显式登记为 Assumption，并说明 C-21 的判定强度弱于 US5（CHK045）；(c) 在 plan.md Capability Gate Matrix 的 C-19 行补充"Stacked Borrows 与 Tree Borrows 结论不一致时的判定规则"（CHK030）
 
 ### 1B. 工具链与工程骨架
 
 - [X] T005 创建 `rust-toolchain.toml`：锁定 stable `1.98.0`，`components = ["rustfmt","clippy","rust-src"]`，`targets = ["x86_64-unknown-linux-gnu","x86_64-unknown-none"]`（R-01 / FR-020）
-- [X] T006 创建根 `Cargo.toml`：`[workspace] members = ["harness","experiments/m*"]`、`exclude = ["experiments/m7-nostd"]`、`resolver`、`[workspace.package] edition = "2024"`、`[workspace.lints.clippy] undocumented_unsafe_blocks = "deny"` 与 `multiple_unsafe_ops_per_block = "deny"`（experiment-contract §C6.4）
+- [X] T006 创建根 `Cargo.toml`：`[workspace] members = ["harness","experiments/001-rust-foundation/m*"]`、`exclude = ["experiments/001-rust-foundation/m7-nostd"]`、`resolver`、`[workspace.package] edition = "2024"`、`[workspace.lints.clippy] undocumented_unsafe_blocks = "deny"` 与 `multiple_unsafe_ops_per_block = "deny"`（experiment-contract §C6.4）
 - [X] T007 [P] 创建 `rustfmt.toml` 与 `clippy.toml`（宽度/msrv 等最小配置，保证 `cargo fmt --check` 与 `cargo clippy -- -D warnings` 可作为日常门禁，quickstart §1）
 - [X] T008 [P] 创建四分目录骨架与 `.gitignore`：`learning/`、`experiments/`、`feynman/`、`acceptance/criteria/`、`tools/`、`harness/`，各目录放置说明其职责的 `README.md`（R-09）
 - [X] T009 [P] 创建 `tools/env-record.sh`：输出 data-model §9 全部字段（`rustc_stable`/`rustc_nightly`/`edition`/`kernel`/`arch`/`target`/`command`），格式与 `rf_harness::env` 一致（FR-010）
@@ -285,7 +297,7 @@ Send/Sync 判定题集。
 **Goal**: 区分 core/alloc/std 各自提供的能力，解释 `#![no_std]` 下缺失的是哪一类运行时服务，说明
 panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-24。
 
-**Independent Test**: `cd experiments/m7-nostd && cargo build` 成功（"可运行"= **构建成功**，见 T003
+**Independent Test**: `cd experiments/001-rust-foundation/m7-nostd && cargo build` 成功（"可运行"= **构建成功**，见 T003
 的裁定）；且对三步递进过程中的**每一条**编译错误都能正确归属到 core / alloc / OS services（SC-006）。
 
 - [X] T109 [US7] 创建 `experiments/m7-nostd/`（**独立于根 workspace**，由 T006 的 `exclude` 保证）：`Cargo.toml`（`panic = "abort"`）、`.cargo/config.toml`（`target = "x86_64-unknown-none"`）、`src/main.rs`（`#![no_std]` `#![no_main]` + `#[panic_handler]`）（R-03）
@@ -298,9 +310,9 @@ panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-
 - [X] T116 [US7] 产物静态检查：`nm target/x86_64-unknown-none/debug/m7-nostd` 与 `readelf -h`，断言/记录关键符号与节区（无 `__libc_start_main`、无 `eh_personality` 等），把可判定项写成脚本 `tools/check-nostd-artifact.sh` 以获得退出码判据（R-04 阶梯 6 / §D2）
 - [X] T117 [US7] host 侧分配器校验：在 `harness` 或 m3 的 host target 上用 `cargo +nightly miri test` 校验 C-24 自实现 `GlobalAlloc` 的 unsafe 实现（裸机产物无法跑 Miri，故在 host 侧取得 `ub_verdict`），结果记入 OBSERVATIONS（plan Gate Matrix C-24 的 "Miri（host 侧 allocator）"）
 - [X] T118 [US7] 填写 `experiments/m7-nostd/OBSERVATIONS.md`（环境块 MUST 含 `target = x86_64-unknown-none` + 三步递进的完整错误抄录 + 每条归属解释 + 架构相关性）
-- [X] T119 [US7] 编写 `acceptance/criteria/c22.md`、`c23.md`、`c24.md`（验证命令为 `cd experiments/m7-nostd && cargo build` 与 `tools/check-nostd-artifact.sh`；判据含"每条错误的归属正确率 100%"与"'不能用标准库'式笼统归因判为未通过"）
+- [X] T119 [US7] 编写 `acceptance/criteria/c22.md`、`c23.md`、`c24.md`（验证命令为 `cd experiments/001-rust-foundation/m7-nostd && cargo build` 与 `tools/check-nostd-artifact.sh`；判据含"每条错误的归属正确率 100%"与"'不能用标准库'式笼统归因判为未通过"）
 - [X] T120 [US7] 编写 `feynman/m7-nostd.md`（五项检验；第 4 节 MUST 收录"`no_std` = 不能用标准库"这一误区及其证据）
-- [X] T121 [US7] 模块验收：`cd experiments/m7-nostd && cargo build` 成功 + `tools/check-nostd-artifact.sh` 退出码 0 + 三步归属正确率 100% → 更新 `acceptance/capability-matrix.md` 中 C-22…C-24 的状态与 Task 列，并标记 m7 为 **FR-012 硬前置已满足**
+- [X] T121 [US7] 模块验收：`cd experiments/001-rust-foundation/m7-nostd && cargo build` 成功 + `tools/check-nostd-artifact.sh` 退出码 0 + 三步归属正确率 100% → 更新 `acceptance/capability-matrix.md` 中 C-22…C-24 的状态与 Task 列，并标记 m7 为 **FR-012 硬前置已满足**
 
 **Checkpoint**: m1/m5/m7 三个硬前置全部完成 —— US8 可以开始。
 
@@ -346,10 +358,10 @@ panic 与内存分配在无 OS 支持时如何被重新定义。覆盖 C-22…C-
 - [ ] T141 [P] 全仓 unsafe SAFETY 覆盖核查（SC-010）：`cargo clippy --workspace --all-targets -- -D warnings` 零 `undocumented_unsafe_blocks` 告警 + 按 T001 界定的范围（含 `learning/`、`feynman/` 文档中的示例代码，CHK021）人工核查五要素，更新 `acceptance/safety-invariant-audit.md` 至覆盖率 100%
 - [ ] T142 [P] 孤立笔记审计（SC-011）：按 T002 §E3 定义的枚举方式列出 `learning/` 与 `feynman/` 下全部条目并与 `acceptance/capability-matrix.md` 比对，把结果与"孤立笔记数量 = 0"的结论写入 `acceptance/traceability-audit.md`
 - [ ] T143 `acceptance/capability-matrix.md` 终态核对：24 行与 spec.md Capability Coverage 表逐行一致（无遗漏、无重复、无无归属，FR-001）；`Task` / `Experiment` / `SourceRef` / `Criterion` 四列全部非空（SC-003）；`Status` 全部为 `accepted`
-- [ ] T144 全量一致性重跑（SC-002）：`cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings`、`cargo test --workspace`、`cd experiments/m7-nostd && cargo build`、`cargo +nightly miri test -p m5-unsafe -p m8-capstone`；全部稳定断言复现，非断言输出差异不计入（FR-003）
+- [ ] T144 全量一致性重跑（SC-002）：`cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings`、`cargo test --workspace`、`cd experiments/001-rust-foundation/m7-nostd && cargo build`、`cargo +nightly miri test -p m5-unsafe -p m8-capstone`；全部稳定断言复现，非断言输出差异不计入（FR-003）
 - [ ] T145 按 `quickstart.md` §8 的 Definition of Done 表逐条核对 SC-001…SC-011，把逐条判定结果写入 `acceptance/definition-of-done.md`
 - [ ] T146 [P] 环境记录归档核查（FR-010 / FR-018）：8 个 `OBSERVATIONS.md` 顶部环境块齐备且字段完整（stable + nightly 双版本、kernel、arch、target、命令），架构敏感实验均有可推广性判定行
-- [ ] T147 [P] 更新根 `README.md`：指向四分目录（`learning/` / `experiments/` / `feynman/` / `acceptance/`）与 `specs/001-rust-foundation/quickstart.md`，说明一键验证命令与"不要执行 `rustup update`"的约束
+- [X] T147 [P] 更新根 `README.md`：指向类型目录 × Feature 子目录（`learning/` / `experiments/` / `feynman/` / `acceptance/` / `learner/` / `contracts/` 下的 `001-rust-foundation/`）与 `specs/001-rust-foundation/quickstart.md`，说明一键验证命令与"不要执行 `rustup update`"的约束
 - [ ] T148 由学习者（本清单的 reviewer）复核并标记 `specs/001-rust-foundation/checklists/learning-quality.md` 的 60 项——T001–T004 已修订的条目方可标 `[x]`；本任务只负责标记与记录理由，MUST NOT 反向修改实现（清单声明为 reviewer-owned）
 - [ ] T149 编写 `acceptance/feature-002-readiness.md`：声明 m1 / m5 / m7 三个模块 `status = complete`（FR-012 硬前置），并按 T003 对 FR-011/FR-012 关系的裁定给出 Feature 002 可否启动的结论
 - [ ] T150 回写机制核查：确认 data-model §1 的 `accepted → regressed` 迁移与 Constitution Review gate 的"未通过项 MUST 作为新任务回写 tasks.md"有可执行入口——在本文件末尾建立"补齐任务（Remediation）"小节并说明写入规则

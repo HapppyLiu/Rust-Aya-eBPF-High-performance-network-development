@@ -5,7 +5,10 @@
 本文件是**验证/运行指南**，不是实现说明。实现细节属于 `tasks.md` 与实施阶段。
 这里回答的是："怎么证明这个 Feature 真的做成了？"
 
-产物结构见 [contracts/experiment-contract.md](./contracts/experiment-contract.md)，
+学习产物（`experiments/` / `learner/` / `learning/` / `feynman/` / `acceptance/`）按类型目录
+放在仓库根，本 Feature 对应子目录为 `*/001-rust-foundation/`。下列命令默认从**仓库根目录**执行。
+
+产物结构见 [contracts/experiment-contract.md](../../contracts/001-rust-foundation/experiment-contract.md)，
 实体字段见 [data-model.md](./data-model.md)。
 
 ---
@@ -51,7 +54,7 @@ cargo test --workspace
 `no_std` 模块被排除在 workspace 之外，需单独构建：
 
 ```bash
-cd experiments/m7-nostd && cargo build && cd -
+cd experiments/001-rust-foundation/m7-nostd && cargo build && cd -
 ```
 
 ---
@@ -68,7 +71,7 @@ cd experiments/m7-nostd && cargo build && cd -
 | m4-concurrency | US4 (P2) | C-12…C-14 | `cargo test -p m4-concurrency` |
 | m5-unsafe | US5 (P1) | C-15…C-20 | `cargo test -p m5-unsafe` + Miri（见 §4） |
 | m6-ffi | US6 (P2) | C-21 | `cargo test -p m6-ffi` + ASan（见 §5） |
-| m7-nostd | US7 (P1) | C-22…C-24 | `cd experiments/m7-nostd && cargo build`（见 §6） |
+| m7-nostd | US7 (P1) | C-22…C-24 | `cd experiments/001-rust-foundation/m7-nostd && cargo build`（见 §6） |
 | m8-capstone | US8 (P3) | 综合 | `cargo test -p m8-capstone`（见 §7） |
 
 单个能力的验证（验收的最小单位）：
@@ -173,7 +176,7 @@ tools/run-asan.sh m6-ffi
 这是"逐条解释编译错误归属"的验收场景，过程比结果重要。
 
 ```bash
-cd experiments/m7-nostd
+cd experiments/001-rust-foundation/m7-nostd
 cargo build                       # target 由 .cargo/config.toml 固定为 x86_64-unknown-none
 ```
 

@@ -258,7 +258,9 @@ $ rustc --emit=llvm-ir t.rs --out-dir .  → t.ll  (30805 bytes)
 
 ## R-09: 项目结构（learning / experiments / feynman / acceptance 四分）
 
-**Decision**：采用四顶层目录分离 + 单 cargo workspace，详见 plan.md 的 Project Structure。
+**Decision**：采用类型目录分离 + Feature 子目录 + 单 cargo workspace。
+`learning/`、`experiments/`、`feynman/`、`acceptance/`、`learner/`、`contracts/` 在仓库根，
+其下再按 `001-rust-foundation/` 等 Feature 隔离；`specs/` 只放规格文档。详见 plan.md 的 Project Structure。
 实验按 **8 个学习模块**（对应 8 个 Story）划分 crate，每个 **capability（C-01…C-24）**在模块内
 拥有独立的 example（可观察）与 test 文件（可断言）。
 

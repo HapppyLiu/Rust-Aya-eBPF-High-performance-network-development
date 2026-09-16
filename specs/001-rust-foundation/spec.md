@@ -401,7 +401,7 @@ Build 环节，也是进入 Feature 002 的准入检查。它必须在其他 Sto
   **判定口径**（三项**合取**，缺一即 SC-002 未达成）：
 
   1. `cargo test --workspace` 退出码 0 —— 覆盖 m1–m6、m8 与 harness 的全部运行期断言；
-  2. `cd experiments/m7-nostd && cargo build` 退出码 0 —— m7 被根 workspace `exclude`，
+  2. `cd experiments/001-rust-foundation/m7-nostd && cargo build` 退出码 0 —— m7 被根 workspace `exclude`，
      **不在** `cargo test --workspace` 的覆盖范围内，遗漏它会使 C-22…C-24 无人守卫；
   3. m7 的**编译期与静态检查断言**复现 —— 即 `tools/check-nostd-artifact.sh` 退出码 0，
      以及三步递进实验的每一条编译错误与既有记录的归属一致。

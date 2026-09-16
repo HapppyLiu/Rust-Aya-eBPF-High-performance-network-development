@@ -40,8 +40,10 @@ cargo crate；每项能力一个**可观察的 example**（打印现象）+ 一�
 主机 target `x86_64-unknown-linux-gnu`；`no_std` 实验 target `x86_64-unknown-none`（stable 上已安装）。（R-03）
 
 **Project Type**: Learning project + executable experiments —— 单 cargo workspace（8 个模块 crate
-+ 1 个 harness crate）+ 1 个被 workspace 排除的独立 `no_std` crate，配套 learning / feynman /
-acceptance 三个文档目录。
++ 1 个 harness crate）+ 1 个被 workspace 排除的独立 `no_std` crate。学习产物按**类型目录**分放在
+仓库根（`learning/`、`learner/`、`feynman/`、`experiments/`、`acceptance/`、`contracts/`），
+其下再按 Feature 分子目录（`001-rust-foundation/`、`002-linux-foundation/` …）。
+`specs/<feature>/` 只存放 Spec / Plan / Tasks 等规格文档。
 
 **Performance Goals**: 本 Feature **不设性能目标，且不产生任何需要 benchmark 的性能主张**。
 "运行时代价"一律改用确定性可测量量表达：分配次数（`CountingAllocator`）、内存布局
@@ -170,107 +172,129 @@ Phase 1 产出 data-model.md、contracts/×3、quickstart.md 后重新核对，*
 
 ## Project Structure
 
-### Documentation (this feature)
+产物按**类型**分目录，每个类型目录下再按 Feature 隔离。`specs/` 只放规格，不放学习结果。
+
+```text
+Rust-Aya-eBPF-High-performance-network-development/
+│
+├── .specify/
+│
+├── specs/
+│   ├── 001-rust-foundation/            # Spec / Plan / Tasks / checklists / quickstart
+│   ├── 002-linux-foundation/           # 后续 Feature
+│   └── ...
+│
+├── learning/                           # Answer Track：概念 + 源码引用
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── learner/                            # Learner Track：问题，不含答案
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── feynman/                            # Answer Track：Feynman 教学
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── experiments/                        # 可执行实验：一模块一 crate
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── acceptance/                         # 验收标准与矩阵
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── contracts/                          # 实验 / 学习产物 / harness 契约
+│   ├── 001-rust-foundation/
+│   └── 002-linux-foundation/
+│
+├── harness/                            # rf-harness：共享验证设施
+├── tools/                              # 从仓库根执行的脚本
+├── Cargo.toml                          # workspace
+└── rust-toolchain.toml
+```
+
+### Specs（本 Feature）
 
 ```text
 specs/001-rust-foundation/
-├── plan.md                  # This file (/speckit-plan command output)
-├── research.md              # Phase 0 output — R-01..R-10 技术决策
-├── data-model.md            # Phase 1 output — 7 个实体的字段/关系/状态机
-├── quickstart.md            # Phase 1 output — 可运行的验证场景
-├── contracts/               # Phase 1 output
-│   ├── experiment-contract.md        # 实验产物的结构与稳定断言规则
-│   ├── harness-api.md                # rf-harness 公开 API 契约
-│   └── learning-artifact-contract.md # learning/feynman/acceptance 文档 schema
+├── plan.md
+├── research.md
+├── data-model.md
+├── quickstart.md
 ├── spec.md
 ├── instructions.md
 ├── checklists/requirements.md
-└── tasks.md                 # Phase 2 output (/speckit-tasks — NOT created by /speckit-plan)
+└── tasks.md
 ```
 
-### Source Code (repository root)
+契约见 [`contracts/001-rust-foundation/`](../../contracts/001-rust-foundation/)。
+
+### Feature artifacts
 
 ```text
-rust-toolchain.toml                     # 锁定 stable 1.98.0 + components + targets (R-01)
-Cargo.toml                              # workspace; exclude = ["experiments/m7-nostd"]
-rustfmt.toml / clippy.toml
-
-harness/                                # rf-harness：共享验证设施，不含学习内容
-├── Cargo.toml
-└── src/
-    ├── lib.rs
-    ├── compile_fail.rs                 # 错误码级断言器（零依赖，R-06）
-    ├── counting_alloc.rs               # CountingAllocator：确定性分配计数（R-07）
-    └── env.rs                          # 环境记录生成
-
-experiments/                            # 可执行实验：一模块一 crate
+experiments/001-rust-foundation/
 ├── m1-ownership/                       # C-01..C-04  (US1, P1)
 │   ├── Cargo.toml
-│   ├── src/lib.rs                      # 被 example/test 复用的最小类型与函数
-│   ├── examples/c01_ownership.rs       # 可观察：打印现象（NON-ASSERTION 输出）
-│   ├── examples/c02_move.rs
-│   ├── examples/c03_borrow.rs
-│   ├── examples/c04_lifetime.rs
-│   ├── tests/c01_ownership.rs          # 可断言：稳定断言（验收单位）
-│   ├── tests/c02_move.rs
-│   ├── tests/c03_borrow.rs
-│   ├── tests/c04_lifetime.rs
-│   ├── compile_fail/                   # MUST NOT 编译的样本 + 期望错误码
-│   │   ├── c03_two_mut_borrows.rs
-│   │   └── c04_dangling_ref.rs
-│   └── OBSERVATIONS.md                 # 实际输出 + 环境记录 + NON-ASSERTION 标注
-├── m2-types/                           # C-05..C-07  (US2, P2)
-├── m3-composition/                     # C-08..C-11  (US3, P2)
-├── m4-concurrency/                     # C-12..C-14  (US4, P2)
-├── m5-unsafe/                          # C-15..C-20  (US5, P1) —— Miri 重点区
-├── m6-ffi/                             # C-21        (US6, P2)
-│   ├── build.rs                        # cc 编译 c/ 下的 C 源
-│   └── c/roundtrip.c                   # C 调 Rust / Rust 调 C 的双向最小实验
-├── m7-nostd/                           # C-22..C-24  (US7, P1) —— 独立 workspace
-│   ├── .cargo/config.toml              # target = "x86_64-unknown-none"
-│   └── src/main.rs                     # #![no_std] #![no_main] + panic_handler
-└── m8-capstone/                        # 综合实验    (US8, P3) —— #![no_std] + alloc 风格
+│   ├── src/lib.rs
+│   ├── examples/c01_ownership.rs
+│   ├── tests/c01_ownership.rs
+│   ├── compile_fail/
+│   └── OBSERVATIONS.md
+├── m2-types/                           # C-05..C-07
+├── m3-composition/                     # C-08..C-11
+├── m4-concurrency/                     # C-12..C-14
+├── m5-unsafe/                          # C-15..C-20
+├── m6-ffi/                             # C-21
+├── m7-nostd/                           # C-22..C-24 —— 独立于 workspace
+└── m8-capstone/                        # 综合实验
 
-learner/                                # ★ Learner Track（学习者视图，不含答案）
-├── README.md                           # 双轨读法与"打开答案"的条件
-├── _templates/{guide.md,predictions.md,selfcheck.md}
-├── m1-ownership/
-│   ├── guide.md                        # 学习框架：引导问题 / 自己定位源码 / 提示阶梯
-│   ├── predictions.md                  # 先预测后验证（预测列 MUST 先提交）
-│   └── selfcheck.md                    # Feynman 五项的提问版
-└── ... m2 .. m8
+learner/001-rust-foundation/
+├── README.md
+├── _templates/
+└── m1-ownership/{guide.md,predictions.md,selfcheck.md}
 
-learning/                               # ▼ Answer Track：学习材料（概念 + 源码引用）
-├── m1-ownership/{concept.md,source-refs.md}
-└── ... m2 .. m8
+learning/001-rust-foundation/
+└── m1-ownership/{concept.md,source-refs.md}
 
-feynman/                                # ▼ Answer Track：Feynman 教学材料，8 份，强制五项检验
-├── m1-ownership.md
-└── ... m2 .. m8
+feynman/001-rust-foundation/
+└── m1-ownership.md … m8-capstone.md
 
-acceptance/                             # 验收
-├── capability-matrix.md                # C-01..C-24 单一事实源（FR-013 追踪链）
-├── criteria/c01.md .. c24.md           # 24 条 Acceptance Criteria
-├── send-sync-quiz.md                   # ≥10 题，US4 开始前定稿（SC-007 / R-10）
-├── send-sync-quiz.answers.md           # 作答前 MUST NOT 打开
-└── unfamiliar-code-reading.md          # SC-004 / SC-005 的计时评估素材与记录
+acceptance/001-rust-foundation/
+├── capability-matrix.md
+├── criteria/c01.md .. c24.md
+├── send-sync-quiz.md
+└── send-sync-quiz.answers.md
 
-tools/
-├── env-record.sh                       # 生成 Environment Record
-├── emit-mir.sh / emit-llvm-ir.sh       # 编译器中间表示导出（R-04 阶梯 3–4）
-├── run-miri.sh                         # 统一 MIRIFLAGS 的 UB 判定入口
-└── run-asan.sh                         # US6 的 FFI UB 判定入口
+contracts/001-rust-foundation/
+├── experiment-contract.md
+├── harness-api.md
+└── learning-artifact-contract.md
 ```
 
-**Structure Decision**：采用**四分目录 + 单 workspace**（R-09），
-并在其上叠加 **Learner Track**（`learner/`）构成**双轨产物**。
-`learning/`（概念与源码引用）、`experiments/`（可执行实验）、`feynman/`（教学材料）、
-`acceptance/`（验收标准与判定题）四个顶层目录一一对应用户要求的四类产物，物理分离避免混杂。
+从仓库根执行的命令使用完整路径，例如
+`cd experiments/001-rust-foundation/m7-nostd && cargo build`。
 
-**双轨结构（Dual-Track）**：`learner/` 是**学习者视图**，只放学习框架与问题；
+### Shared infrastructure
+
+```text
+rust-toolchain.toml
+Cargo.toml                              # members = ["harness", "experiments/001-rust-foundation/m*"]
+                                        # exclude = ["experiments/001-rust-foundation/m7-nostd"]
+rustfmt.toml / clippy.toml
+harness/
+tools/
+```
+
+**Structure Decision**：采用**类型目录 × Feature 子目录 + 单 workspace**（R-09），
+并叠加 **Learner Track**（`learner/<feature>/`）构成**双轨产物**。
+`learning/`、`experiments/`、`feynman/`、`acceptance/` 四个类型目录一一对应四类产物；
+同一 Feature 的结果都落在各自类型下的 `<NNN>-<name>/` 里，后续 Feature 不会混进上一套产物。
+
+**双轨结构（Dual-Track）**：`learner/<feature>/` 是**学习者视图**，只放学习框架与问题；
 `learning/` + `feynman/` + `experiments/` 的源码是**答案视图**。
-两轨在 `acceptance/` 汇合 —— 验收标准对两轨中立，既不属于问题也不属于答案。
-契约见 [contracts/learning-artifact-contract.md](./contracts/learning-artifact-contract.md) §H，
+两轨在 `acceptance/<feature>/` 汇合 —— 验收标准对两轨中立，既不属于问题也不属于答案。
+契约见 [contracts/learning-artifact-contract.md](../../contracts/001-rust-foundation/learning-artifact-contract.md) §H，
 其中 §H3 规定了 `learner/` 下 MUST NOT 出现的六类答案内容（错误码、具体数值、UB 类别文本、
 源码行号、机制性结论、Answer Track 原文）。
 
@@ -284,7 +308,7 @@ tools/
 各自保留独立 AC 与实验"的裁定。每个 example 与 test 都是独立的 cargo 目标，
 `cargo run -p m5-unsafe --example c18_alignment` 可单独执行，满足"小、独立、可运行、可观察"。
 
-`experiments/m7-nostd` 被根 workspace `exclude`，因为 `#![no_main]` + 自定义 `#[panic_handler]`
+`experiments/001-rust-foundation/m7-nostd` 被根 workspace `exclude`，因为 `#![no_main]` + 自定义 `#[panic_handler]`
 的 crate 无法用 host target 构建，会污染 `cargo test --workspace` 的一键验证（R-03）。
 
 ## Complexity Tracking

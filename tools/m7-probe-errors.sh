@@ -16,7 +16,7 @@ usage() { sed -n '2,${/^#/!q;s/^# \{0,1\}//;p}' "$0"; exit "${1:-0}"; }
 [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && usage 0
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-M7="$ROOT/experiments/m7-nostd"
+M7="$ROOT/experiments/001-rust-foundation/m7-nostd"
 export CARGO_TARGET_DIR="$M7/target"
 
 # id | 归属（文档用，脚本不断言归属）| cargo 参数描述 | 期望子串

@@ -39,7 +39,7 @@ echo
 case "$rc" in
     0) echo "==> 退出码 0：ASan 未在本次运行中观测到内存错误。"
        echo "    ub_verdict 候选 = clean（**仅在 ASan 覆盖面内**成立，见文件头的强度声明）。"
-       echo "    该假设 MUST 抄录进 experiments/${PKG}/OBSERVATIONS.md 的判定说明。" ;;
+       echo "    该假设 MUST 抄录进 experiments/001-rust-foundation/${PKG}/OBSERVATIONS.md 的判定说明。" ;;
     *) echo "==> 退出码 ${rc}：ASan 报告了内存错误。核对是否命中事前预测。" ;;
 esac
 exit "$rc"

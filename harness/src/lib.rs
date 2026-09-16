@@ -1,6 +1,6 @@
 //! `rf-harness` —— Rust Foundation 学习工程的共享验证设施。
 //!
-//! 契约：`specs/001-rust-foundation/contracts/harness-api.md`
+//! 契约：`contracts/001-rust-foundation/harness-api.md`
 //!
 //! 本 crate 存在的理由是让实验契约可被**机械执行**，而不是靠自律：
 //!
